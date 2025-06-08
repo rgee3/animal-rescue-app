@@ -1,0 +1,40 @@
+/* src/components/AnimalCard.css */
+.animal-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem;
+    max-width: 300px;
+    background: #fdfdfd;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+}
+
+.animal-card h3 {
+    margin-top: 0;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.status.available {
+    color: green;
+}
+
+.status.unavailable {
+    color: red;
+}
+
+button {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    background-color: #1976d2;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #135ba1;
+}
