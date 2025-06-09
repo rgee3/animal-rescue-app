@@ -62,6 +62,59 @@ app.get('/animals/:id/details', async (req, res) => {
     }
 });
 
+app.get('/staff', async (req, res) => {
+    try {
+        const [rows] = await db.promise().query('SELECT * FROM staff');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching staff:', error);
+        res.status(500).send('Database error retrieving staff');
+    }
+});
+
+app.get('/staff/:ssn/details', async (req, res) => {
+    const staffSsn = req.params.ssn;
+
+    try {
+        const [staffRows] = await db.promise().query(
+            'SELECT * FROM staff WHERE staffSsn = ?', [staffSsn]
+        );
+
+        if (staffRows.length === 0) {
+            return res.status(404).json({ message: 'Staff member not found' });
+        }
+
+        const staff = staffRows[0];
+
+        let supervisorName = null;
+        if (staff.supervisorSsn) {
+            const [supervisorRows] = await db.promise().query(
+                'SELECT staffName FROM staff WHERE staffSsn = ?', [staff.supervisorSsn]
+            );
+            if (supervisorRows.length > 0) {
+                supervisorName = supervisorRows[0].staffName;
+            }
+        }
+
+        const [caredForRows] = await db.promise().query(
+            `SELECT a.animalId, a.animalName, a.animalSpecies
+             FROM cares_for cf
+             JOIN animal a ON cf.Al_animalId = a.animalId
+             WHERE cf.St_staffSsn = ?`, [staffSsn]
+        );
+
+        res.json({
+            supervisorName,
+            animalsCaredFor: caredForRows
+        });
+
+    } catch (error) {
+        console.error('Error fetching staff details:', error);
+        res.status(500).json({ error: 'Failed to retrieve staff details' });
+    }
+});
+
+
 app.post('/animals', async (req, res) => {
     const {
         animalName,
@@ -114,14 +167,13 @@ app.put('/animals/:id', async (req, res) => {
                 animalName,
                 animalSpecies,
                 animalBreed,
-                animalBdate ? animalBdate.split('T')[0] : null, // strips timezone info if needed
+                animalBdate ? animalBdate.split('T')[0] : null,
                 adoptionStatus,
                 arrivalDate ? arrivalDate.split('T')[0] : null,
                 animalId
             ]
         );
 
-        // Fetch and return the updated row
         const [updatedRows] = await db.promise().query(
             'SELECT * FROM animal WHERE animalId = ?',
             [animalId]
