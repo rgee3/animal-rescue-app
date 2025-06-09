@@ -26,7 +26,9 @@
     top: 1rem;
     right: 1rem;
     border: none;
-    background: grey;
+    background: transparent;
     font-size: 1.2rem;
     cursor: pointer;
+    color: #333;
+    opacity: 1;
 }

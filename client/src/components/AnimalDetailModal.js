@@ -1,7 +1,7 @@
 import React from 'react';
 import './AnimalDetailModal.css';
 
-const AnimalDetailModal = ({ animal, onClose }) => {
+const AnimalDetailModal = ({ animal, details, onClose, onEditRequest }) => {
     if (!animal) return null;
 
     const {
@@ -75,7 +75,10 @@ const AnimalDetailModal = ({ animal, onClose }) => {
                     </ul>
                 ) : (
                     <p>No vet visit records.</p>
+
                 )}
+                <button onClick={() => onEditRequest(animal)}>Edit</button>
+
             </div>
         </div>
     );

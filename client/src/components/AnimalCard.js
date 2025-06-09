@@ -10,7 +10,7 @@ function calculateAge(birthdate) {
     return m < 0 || (m === 0 && today.getDate() < birth.getDate()) ? age - 1 : age;
 }
 
-export default function AnimalCard({ animal, onMoreInfo }) {
+export default function AnimalCard({ animal, onMoreInfo, onEdit }) {
     return (
         <div className="animal-card">
             <h3>{animal.animalName}</h3>
@@ -21,6 +21,7 @@ export default function AnimalCard({ animal, onMoreInfo }) {
                 <strong>Status:</strong> {animal.adoptionStatus}
             </p>
             <button onClick={() => onMoreInfo(animal)}>More Info</button>
+            <button onClick={() => onEdit(animal)}>Edit</button>
         </div>
     );
 }
