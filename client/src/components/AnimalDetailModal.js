@@ -1,87 +1,95 @@
-import React from 'react';
+// src/components/AnimalDetailModal.js
+import React, { useState } from 'react';
 import './AnimalDetailModal.css';
 
-const AnimalDetailModal = ({ animal, details, onClose, onEditRequest }) => {
-    if (!animal) return null;
+export default function AnimalDetailModal({ animal, details, onClose, onEditRequest }) {
+    const [activeTab, setActiveTab] = useState('info');
 
-    const {
-        animalName,
-        animalSpecies,
-        animalBreed,
-        animalBdate,
-        adoptionStatus,
-        arrivalDate,
-        vaccinations,
-        vetVisits
-    } = animal;
-
-    const formatDate = (dateStr) =>
-        new Date(dateStr).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-
-    const formatAge = (birthdate) => {
-        const birth = new Date(birthdate);
-        const today = new Date();
-        const diffMs = today - birth;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffMonths = Math.floor(diffDays / 30.4375);
-        const diffYears = Math.floor(diffMonths / 12);
-
-        if (diffDays < 30) {
-            const weeks = Math.floor(diffDays / 7);
-            return `${weeks} week${weeks !== 1 ? 's' : ''}`;
-        } else if (diffMonths < 12) {
-            return `${diffMonths} month${diffMonths !== 1 ? 's' : ''}`;
-        } else {
-            return `${diffYears} year${diffYears !== 1 ? 's' : ''}`;
-        }
-    };
+    const { vaccinations = [], vetVisits = [] } = details;
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
                 <button className="close-button" onClick={onClose}>X</button>
-                <h2>{animalName}</h2>
-                <p><strong>Species:</strong> {animalSpecies}</p>
-                <p><strong>Breed:</strong> {animalBreed}</p>
-                <p><strong>Birthdate:</strong> {formatDate(animalBdate)} (Age: {formatAge(animalBdate)})</p>
-                <p><strong>Arrival Date:</strong> {formatDate(arrivalDate)}</p>
-                <p><strong>Status:</strong> {adoptionStatus}</p>
+                <h2>Animal Details</h2>
 
-                <h3>Vaccinations</h3>
-                {vaccinations?.length > 0 ? (
-                    <ul>
-                        {vaccinations.map((vaccine, index) => (
-                            <li key={index}>
-                                {vaccine.vaccineName} (Lot #{vaccine.vaccineLotNumber})
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No vaccinations on file.</p>
+                <div className="tab-buttons">
+                    <button className={activeTab === 'info' ? 'active' : ''} onClick={() => setActiveTab('info')}>Info</button>
+                    <button className={activeTab === 'medical' ? 'active' : ''} onClick={() => setActiveTab('medical')}>Medical</button>
+                    <button className={activeTab === 'adoption' ? 'active' : ''} onClick={() => setActiveTab('adoption')}>Adoption</button>
+                </div>
+
+                <div className="tab-content">
+                    {activeTab === 'info' && (
+                        <div>
+                            <p><strong>Name:</strong> {animal.animalName}</p>
+                            <p><strong>Species:</strong> {animal.animalSpecies}</p>
+                            <p><strong>Breed:</strong> {animal.animalBreed}</p>
+                            <p><strong>Birthdate:</strong> {animal.animalBdate?.split('T')[0]}</p>
+                            <p><strong>Status:</strong> {animal.adoptionStatus}</p>
+                            <p><strong>Arrival Date:</strong> {animal.arrivalDate?.split('T')[0]}</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'medical' && (
+                        <div>
+                            <h4>Vaccinations</h4>
+                            {vaccinations.length > 0 ? (
+                                <ul style={{ paddingLeft: '1.2rem', textAlign: 'left' }}>
+                                    {vaccinations.map((vax, index) => (
+                                        <li key={index}>
+                                            {vax.vaccineName} on {vax.vaccineDate?.split('T')[0]}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No vaccinations recorded.</p>
+                            )}
+
+                            <h4>Vet Visits</h4>
+                            {vetVisits.length > 0 ? (
+                                <ul style={{ paddingLeft: '1.2rem', textAlign: 'left' }}>
+                                    {details.vetVisits.map((visit, index) => (
+                                        <li key={index} style={{ marginBottom: '1rem' }}>
+                                            <strong>Date:</strong> {new Date(visit.visitDate).toLocaleDateString()}<br />
+                                            <strong>Vet:</strong> {visit.vetName}<br />
+                                            <strong>Phone:</strong> {visit.vetPhone}<br />
+                                            <strong>Diagnosis:</strong> {visit.animalDiagnosis}<br />
+                                            <strong>Next Checkup:</strong> {new Date(visit.lastCheckup).toLocaleDateString()}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            ) : <p>No vet visits recorded.</p>}
+                        </div>
+                    )}
+
+                    {activeTab === 'adoption' && (
+                        <div>
+                            <h3>Adoption History</h3>
+                            {details.adoptions.length > 0 ? (
+                                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                {details.adoptions.map((adopt, index) => (
+                                        <li key={index}>
+                                            <strong>Date:</strong> {new Date(adopt.adoptionDate).toLocaleDateString()}<br />
+                                            <strong>Name:</strong> {adopt.adopterName}<br />
+                                            <strong>Phone:</strong> {adopt.adopterPhone}<br />
+                                            <strong>Address:</strong> {adopt.adopterAddress}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No adoption history found.</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {activeTab === 'info' && (
+                    <button onClick={() => onEditRequest(animal)}>Edit</button>
                 )}
-
-                <h3>Vet Visits</h3>
-                {vetVisits?.length > 0 ? (
-                    <ul>
-                        {vetVisits.map((visit, index) => (
-                            <li key={index}>
-                                <strong>{formatDate(visit.visitDate)}</strong> – {visit.animalDiagnosis} (Vet: {visit.vetName})
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No vet visit records.</p>
-
-                )}
-                <button onClick={() => onEditRequest(animal)}>Edit</button>
 
             </div>
         </div>
     );
-};
-
-export default AnimalDetailModal;
+}
