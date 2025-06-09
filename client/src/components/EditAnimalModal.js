@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css'; // Reuse existing styles
 
-export default function EditAnimalModal({ initialData, onClose, onSave }) {
+export default function EditAnimalModal({ initialData, onClose, onSave, onDelete }) {
     const [form, setForm] = useState({
+        animalId: '',
         animalName: '',
         animalSpecies: '',
         animalBreed: '',
@@ -21,6 +22,7 @@ export default function EditAnimalModal({ initialData, onClose, onSave }) {
             };
 
             setForm({
+                animalId: initialData.animalId || '',
                 animalName: initialData.animalName || '',
                 animalSpecies: initialData.animalSpecies || '',
                 animalBreed: initialData.animalBreed || '',
@@ -63,6 +65,18 @@ export default function EditAnimalModal({ initialData, onClose, onSave }) {
                         </select>
                     </label>
                     <button type="submit">Update</button>
+                    <button
+                        type="button"
+                        className="delete-button"
+                        onClick={() => {
+                            if (window.confirm(`Are you sure you want to delete ${form.animalName}?`)) {
+                                onDelete(form.animalId);
+                            }
+                        }}
+                    >
+                        Delete
+                    </button>
+
                 </form>
             </div>
         </div>

@@ -71,3 +71,11 @@
     background: none;
     cursor: pointer;
 }
+
+.delete-button {
+    background-color: lightcoral;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+}

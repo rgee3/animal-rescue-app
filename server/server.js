@@ -138,6 +138,25 @@ app.put('/animals/:id', async (req, res) => {
     }
 });
 
+app.delete('/animals/:id', async (req, res) => {
+    const animalId = req.params.id;
+
+    try {
+        const [result] = await db.promise().query(
+            'DELETE FROM animal WHERE animalId = ?',
+            [animalId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Animal not found' });
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        console.error('Error deleting animal:', error);
+        res.status(500).json({ error: 'Failed to delete animal' });
+    }
+});
 
 
 // LISTEN

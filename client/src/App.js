@@ -119,6 +119,23 @@ function App() {
                             alert('Failed to update animal.');
                         }
                     }}
+                    onDelete={async (animalId) => {
+                        try {
+                            const response = await fetch(`http://localhost:3001/animals/${animalId}`, {
+                                method: 'DELETE',
+                            });
+
+                            if (response.status === 204) {
+                                setAnimals(prev => prev.filter(animal => animal.animalId !== animalId));
+                                setIsEditModalOpen(false);
+                            } else {
+                                alert('Failed to delete animal.');
+                            }
+                        } catch (err) {
+                            console.error('Error deleting animal:', err);
+                            alert('Server error during deletion.');
+                        }
+                    }}
                 />
             )}
 
