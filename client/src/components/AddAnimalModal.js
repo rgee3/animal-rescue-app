@@ -23,6 +23,7 @@ export default function AddAnimalModal({ onClose, onSave }) {
             alert('Please fill out all required fields.');
             return;
         }
+        console.log("Submitting form:", form);
         onSave(form);
     };
 
@@ -33,10 +34,10 @@ export default function AddAnimalModal({ onClose, onSave }) {
                 <h2>Add New Animal</h2>
                 <form onSubmit={handleSubmit}>
                     <label>Name*: <input name="animalName" value={form.animalName} onChange={handleChange} required /></label>
-                    <label>Species*: <input name="animalSpecies" value={form.animalSpecies} onChange={handleChange} required /></label>
+                    <label>Species: <input name="animalSpecies" value={form.animalSpecies} onChange={handleChange} /></label>
                     <label>Breed: <input name="animalBreed" value={form.animalBreed} onChange={handleChange} /></label>
                     <label>Birthdate: <input name="animalBdate" type="date" value={form.animalBdate} onChange={handleChange} /></label>
-                    <label>Arrival Date*: <input name="arrivalDate" type="date" value={form.arrivalDate} onChange={handleChange} required /></label>
+                    <label>Arrival Date: <input name="arrivalDate" type="date" value={form.arrivalDate} onChange={handleChange} /></label>
                     <label>Status*:
                         <select name="adoptionStatus" value={form.adoptionStatus} onChange={handleChange} required>
                             <option value="available">Available</option>
