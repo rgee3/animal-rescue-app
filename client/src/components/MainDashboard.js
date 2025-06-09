@@ -12,6 +12,8 @@ import VetList from './VetList';
 import VetDetailModal from "./VetDetailModal";
 import AddVetModal from './AddVetModal';
 import EditVetModal from './EditVetModal';
+import AdoptionList from './AdoptionList';
+
 
 
 
@@ -38,6 +40,7 @@ export default function MainDashboard() {
     const [editVet, setEditVet] = useState(null);
     const [isEditVetModalOpen, setIsEditVetModalOpen] = useState(false);
     const [adoptions, setAdoptions] = useState([]);
+
 
 
 
@@ -165,6 +168,10 @@ export default function MainDashboard() {
                         }}
                     />
                 </>
+            )}
+
+            {view === 'adoptions' && (
+                <AdoptionList adoptions={adoptions} />
             )}
 
             {selectedVet && vetDetails && (
@@ -425,6 +432,7 @@ export default function MainDashboard() {
                     }}
                 />
             )}
+
 
         </div>
     );
