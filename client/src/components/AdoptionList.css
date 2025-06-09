@@ -1,0 +1,15 @@
+.adoption-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem;
+    max-width: 300px;
+    background: #fefefe;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    vertical-align: top;
+}
+
+.adoption-card h3 {
+    margin-top: 0;
+}
