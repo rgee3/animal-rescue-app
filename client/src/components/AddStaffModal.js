@@ -1,6 +1,6 @@
 // src/components/AddStaffModal.js
 import React, { useState } from 'react';
-import './AddAnimalModal.css'; // reuse same styles
+import './AddAnimalModal.css';
 
 export default function AddStaffModal({ onClose, onSave }) {
     const [form, setForm] = useState({

@@ -1,6 +1,6 @@
 // src/components/EditStaffModal.js
 import React, { useState, useEffect } from 'react';
-import './AddAnimalModal.css'; // Reuse existing modal styles
+import './AddAnimalModal.css';
 
 export default function EditStaffModal({ initialData, onClose, onSave, onDelete }) {
     const [form, setForm] = useState({

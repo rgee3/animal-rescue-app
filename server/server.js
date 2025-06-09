@@ -402,6 +402,26 @@ app.delete('/vets/:ssn', async (req, res) => {
     }
 });
 
+app.get('/adoptions', async (req, res) => {
+    try {
+        const [rows] = await db.promise().query(
+            `SELECT ab.adoptionDate, 
+                    a.animalId, a.animalName, a.animalSpecies,
+                    ad.adopterName, ad.adopterPhone, ad.adopterAddress
+             FROM adopted_by ab
+             JOIN animal a ON ab.Al_animalId = a.animalId
+             JOIN adopter ad ON ab.Ar_adopterSsn = ad.adopterSsn
+             ORDER BY ab.adoptionDate DESC`
+        );
+
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching adoptions:', err);
+        res.status(500).json({ error: 'Failed to fetch adoptions' });
+    }
+});
+
+
 
 // LISTEN
 app.listen(3001, () => {

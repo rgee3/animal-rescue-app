@@ -186,7 +186,6 @@ export default function MainDashboard() {
             )}
 
 
-            {/* Detail Modal */}
             {selectedAnimal && animalDetails && (
                 <AnimalDetailModal
                     animal={selectedAnimal}
@@ -204,7 +203,6 @@ export default function MainDashboard() {
                 />
             )}
 
-            {/* Add Animal Modal */}
             {showAddModal && (
                 <AddAnimalModal
                     onClose={() => setShowAddModal(false)}
@@ -226,7 +224,6 @@ export default function MainDashboard() {
                 />
             )}
 
-            {/* Edit Animal Modal */}
             {isEditModalOpen && (
                 <EditAnimalModal
                     initialData={editAnimal}
@@ -363,7 +360,6 @@ export default function MainDashboard() {
                 />
             )}
 
-            {/* Add Vet Modal */}
             {showAddVetModal && (
                 <AddVetModal
                     onClose={() => setShowAddVetModal(false)}
@@ -386,7 +382,6 @@ export default function MainDashboard() {
                 />
             )}
 
-            {/* Edit Vet Modal */}
             {isEditVetModalOpen && (
                 <EditVetModal
                     initialData={editVet}

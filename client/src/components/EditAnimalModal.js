@@ -1,7 +1,6 @@
 // src/components/EditAnimalModal.js
 import React, { useState, useEffect } from 'react';
-import './AddAnimalModal.css'; // Reuse existing styles
-
+import './AddAnimalModal.css';
 export default function EditAnimalModal({ initialData, onClose, onSave, onDelete }) {
     const [form, setForm] = useState({
         animalId: '',
