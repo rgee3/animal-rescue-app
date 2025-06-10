@@ -19,6 +19,8 @@ import AdoptionCard from './AdoptionCard';
 import AdoptionDetailModal from './AdoptionDetailModal';
 import MedicalHistoryList from './MedicalHistoryList';
 import MedicalHistoryModal from './MedicalHistoryModal';
+import AddMedicalRecordModal from './AddMedicalRecordModal';
+
 
 
 
@@ -56,6 +58,7 @@ export default function MainDashboard() {
 
     const [medicalHistory, setMedicalHistory] = useState([]);
     const [showMedicalModal, setShowMedicalModal] = useState(false);
+    const [showAddMedicalModal, setShowAddMedicalModal] = useState(false);
 
 
     const loadAdoptions = () => {
@@ -150,18 +153,41 @@ export default function MainDashboard() {
         }
     }, [view]);
 
+    const handleAddMedicalRecord = async (form) => {
+        try {
+            if (form.recordType === 'vaccination') {
+                await fetch('http://localhost:3001/vaccinations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        animalId: form.animalId,
+                        vaccineName: form.vaccineName,
+                        vaccineDate: form.vaccineDate,
+                        vaccineLot: form.vaccineLot
+                    })
+                });
+            } else if (form.recordType === 'appointment') {
+                await fetch('http://localhost:3001/vet_visits', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        animalId: form.animalId,
+                        vetSsn: form.vetSsn,
+                        staffSsn: form.staffSsn,
+                        visitDate: form.visitDate,
+                        diagnosis: form.diagnosis
+                    })
+                });
+            }
 
+            setShowAddMedicalModal(false);
+            setView('medical'); // Optionally force refresh
+        } catch (err) {
+            console.error('Error saving medical record:', err);
+            alert('Failed to save medical record.');
+        }
+    };
 
-    // const handleStaffMoreInfo = async (staff) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:3001/staff/${staff.staffSsn}/details`);
-    //         const data = await response.json();
-    //         setStaffDetails(data);
-    //         setSelectedStaff(staff);
-    //     } catch (err) {
-    //         console.error('Error fetching staff details:', err);
-    //     }
-    // };
 
     return (
         <div>
@@ -546,27 +572,33 @@ export default function MainDashboard() {
             )}
 
             {view === 'medical' && (
-                <MedicalHistoryList
-                    history={medicalHistory}
-                    onMoreInfo={async (entry) => {
-                        try {
+                <>
+                    <button onClick={() => setShowAddMedicalModal(true)}>➕ Add Medical Record</button>
+                    <MedicalHistoryList
+                        onMoreInfo={async (entry) => {
                             const res = await fetch(`http://localhost:3001/animals/${entry.animalId}/details`);
                             const fullEntry = await res.json();
-                            setSelectedAnimal(fullEntry); // includes .animal, .vaccinations, .vetVisits
+                            setSelectedAnimal(fullEntry);
                             setShowMedicalModal(true);
-                        } catch (err) {
-                            console.error('Failed to load full medical data', err);
-                        }
-                    }}
-
-                />
+                        }}
+                    />
+                </>
             )}
+
             {showMedicalModal && selectedAnimal && (
                 <MedicalHistoryModal
                     entry={selectedAnimal}
                     onClose={() => setShowMedicalModal(false)}
                 />
             )}
+
+            {showAddMedicalModal && (
+                <AddMedicalRecordModal
+                    onClose={() => setShowAddMedicalModal(false)}
+                    onSave={handleAddMedicalRecord}
+                />
+            )}
+
 
 
 

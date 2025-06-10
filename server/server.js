@@ -552,6 +552,40 @@ app.get('/medical-history', async (req, res) => {
     }
 });
 
+app.post('/vaccinations', async (req, res) => {
+    const { animalId, vaccineName, vaccineDate, vaccineLot } = req.body;
+
+    try {
+        await db.promise().query(
+            `INSERT INTO vaccinations (Al_animalId, vaccineName, vaccineDate, vaccineLotNumber)
+             VALUES (?, ?, ?, ?);`,
+            [animalId, vaccineName, vaccineDate, vaccineLot || null]
+        );
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error adding vaccination:', err);
+        res.status(500).send('Failed to add vaccination');
+    }
+});
+
+app.post('/vet_visits', async (req, res) => {
+    const { animalId, vetSsn, visitDate, diagnosis } = req.body;
+
+    try {
+        await db.promise().query(
+            `INSERT INTO vet_visits (Al_animalId, V_vetSsn, visitDate, animalDiagnosis)
+             VALUES (?, ?, ?, ?)`,
+            [animalId, vetSsn, visitDate, diagnosis || null]
+        );
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error adding vet visit:', err);
+        res.status(500).send('Failed to add vet visit');
+    }
+});
+
 
 
 // LISTEN
