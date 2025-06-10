@@ -13,6 +13,13 @@ import VetDetailModal from "./VetDetailModal";
 import AddVetModal from './AddVetModal';
 import EditVetModal from './EditVetModal';
 import AdoptionList from './AdoptionList';
+import AddAdoptionModal from './AddAdoptionModal';
+import EditAdoptionModal from './EditAdoptionModal';
+import AdoptionCard from './AdoptionCard';
+import AdoptionDetailModal from './AdoptionDetailModal';
+import MedicalHistoryList from './MedicalHistoryList';
+import MedicalHistoryModal from './MedicalHistoryModal';
+
 
 
 
@@ -27,6 +34,7 @@ export default function MainDashboard() {
     const [editAnimal, setEditAnimal] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
+
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [staffDetails, setStaffDetails] = useState(null);
     const [showAddStaffModal, setShowAddStaffModal] = useState(false);
@@ -39,8 +47,62 @@ export default function MainDashboard() {
     const [showAddVetModal, setShowAddVetModal] = useState(false);
     const [editVet, setEditVet] = useState(null);
     const [isEditVetModalOpen, setIsEditVetModalOpen] = useState(false);
-    const [adoptions, setAdoptions] = useState([]);
 
+    const [adoptions, setAdoptions] = useState([]);
+    const [showAddAdoptionModal, setShowAddAdoptionModal] = useState(false);
+    const [selectedAdoption, setSelectedAdoption] = useState(null); // for edit/detail
+    const [showEditAdoptionModal, setShowEditAdoptionModal] = useState(false);
+    const [showAdoptionDetailModal, setShowAdoptionDetailModal] = useState(false);
+
+    const [medicalHistory, setMedicalHistory] = useState([]);
+    const [showMedicalModal, setShowMedicalModal] = useState(false);
+
+
+    const loadAdoptions = () => {
+        fetch('http://localhost:3001/adoptions')
+            .then(res => res.json())
+            .then(data => setAdoptions(data))
+            .catch(err => console.error('Error loading adoptions:', err));
+    };
+
+    useEffect(() => {
+        if (view === 'adoptions') {
+            loadAdoptions();
+        }
+    }, [view]);
+
+    const handleAddAdoption = (data) => {
+        fetch('/adoptions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            setShowAddAdoptionModal(false);
+            loadAdoptions();
+        });
+    };
+
+    const handleEditAdoption = (data) => {
+        fetch('/adoptions', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            setShowEditAdoptionModal(false);
+            loadAdoptions();
+        });
+    };
+
+    const handleDeleteAdoption = (data) => {
+        fetch('/adoptions', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            setShowEditAdoptionModal(false);
+            loadAdoptions();
+        });
+    };
 
 
 
@@ -79,6 +141,16 @@ export default function MainDashboard() {
         }
     }, [view]);
 
+    useEffect(() => {
+        if (view === 'medical') {
+            fetch('http://localhost:3001/medical-history')
+                .then(res => res.json())
+                .then(data => setMedicalHistory(data))
+                .catch(err => console.error('Error loading medical history:', err));
+        }
+    }, [view]);
+
+
 
     // const handleStaffMoreInfo = async (staff) => {
     //     try {
@@ -98,6 +170,8 @@ export default function MainDashboard() {
                 <button onClick={() => setView('staff')}>Staff</button>
                 <button onClick={() => setView('vets')}>Vets</button>
                 <button onClick={() => setView('adoptions')}>Adoptions</button>
+                <button onClick={() => setView('medical')}>Medical History</button>
+
 
             </div>
 
@@ -171,8 +245,51 @@ export default function MainDashboard() {
             )}
 
             {view === 'adoptions' && (
-                <AdoptionList adoptions={adoptions} />
+                <div className="tab-content">
+                    <h2>Adoptions</h2>
+                    <button onClick={() => setShowAddAdoptionModal(true)}>+ Add Adoption</button>
+                    <div className="card-list">
+                        {adoptions.map((adoption) => (
+                            <AdoptionCard
+                                key={`${adoption.Al_animalId}-${adoption.Ar_adopterSsn}`}
+                                adoption={adoption}
+                                onEdit={() => {
+                                    setSelectedAdoption(adoption);
+                                    setShowEditAdoptionModal(true);
+                                }}
+                                onMoreInfo={() => {
+                                    setSelectedAdoption(adoption);
+                                    setShowAdoptionDetailModal(true);
+                                }}
+                            />
+                        ))}
+                    </div>
+
+
+
+                    {showAddAdoptionModal && (
+                        <AddAdoptionModal
+                            onClose={() => setShowAddAdoptionModal(false)}
+                            onSave={handleAddAdoption}
+                        />
+                    )}
+                    {showEditAdoptionModal && selectedAdoption && (
+                        <EditAdoptionModal
+                            initialData={selectedAdoption}
+                            onClose={() => setShowEditAdoptionModal(false)}
+                            onSave={handleEditAdoption}
+                            onDelete={handleDeleteAdoption}
+                        />
+                    )}
+                    {showAdoptionDetailModal && selectedAdoption && (
+                        <AdoptionDetailModal
+                            adoption={selectedAdoption}
+                            onClose={() => setShowAdoptionDetailModal(false)}
+                        />
+                    )}
+                </div>
             )}
+
 
             {selectedVet && vetDetails && (
                 <VetDetailModal
@@ -427,6 +544,31 @@ export default function MainDashboard() {
                     }}
                 />
             )}
+
+            {view === 'medical' && (
+                <MedicalHistoryList
+                    history={medicalHistory}
+                    onMoreInfo={async (entry) => {
+                        try {
+                            const res = await fetch(`http://localhost:3001/animals/${entry.animalId}/details`);
+                            const fullEntry = await res.json();
+                            setSelectedAnimal(fullEntry); // includes .animal, .vaccinations, .vetVisits
+                            setShowMedicalModal(true);
+                        } catch (err) {
+                            console.error('Failed to load full medical data', err);
+                        }
+                    }}
+
+                />
+            )}
+            {showMedicalModal && selectedAnimal && (
+                <MedicalHistoryModal
+                    entry={selectedAnimal}
+                    onClose={() => setShowMedicalModal(false)}
+                />
+            )}
+
+
 
 
         </div>

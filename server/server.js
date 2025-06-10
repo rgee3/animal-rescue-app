@@ -19,14 +19,25 @@ const db = mysql.createConnection({
 
 
 app.get('/animals', async (req, res) => {
+    const status = req.query.status;
+
     try {
-        const [rows] = await db.promise().query('SELECT * FROM animal');
+        let query = 'SELECT * FROM animal';
+        let params = [];
+
+        if (status) {
+            query += ' WHERE adoptionStatus = ?';
+            params.push(status);
+        }
+
+        const [rows] = await db.promise().query(query, params);
         res.json(rows);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Database error');
+        console.error('Error fetching animals:', error);
+        res.status(500).send('Error fetching animals');
     }
 });
+
 
 app.get('/animals/:id/details', async (req, res) => {
     const animalId = req.params.id;
@@ -418,6 +429,126 @@ app.get('/adoptions', async (req, res) => {
     } catch (err) {
         console.error('Error fetching adoptions:', err);
         res.status(500).json({ error: 'Failed to fetch adoptions' });
+    }
+});
+
+
+
+app.post('/adoptions', (req, res) => {
+    const {
+        Al_animalId,
+        Ar_adopterSsn,
+        adopterName,
+        adopterBdate,
+        adopterPhone,
+        adopterAddress,
+        adoptionDate
+    } = req.body;
+
+    // Step 1: insert adopter if not exists
+    const insertAdopter = `
+        INSERT INTO adopter (adopterSsn, adopterName, adopterBdate, adopterPhone, adopterAddress)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE adopterName=VALUES(adopterName)
+    `;
+
+    db.query(insertAdopter, [Ar_adopterSsn, adopterName, adopterBdate, adopterPhone, adopterAddress], (err) => {
+        if (err) {
+            console.error('Error inserting adopter:', err);
+            return res.status(500).send('Failed to insert adopter');
+        }
+
+        // Step 2: insert adoption
+        const insertAdoption = `
+            INSERT INTO adopted_by (Al_animalId, Ar_adopterSsn, adoptionDate)
+            VALUES (?, ?, ?)
+        `;
+
+        db.query(insertAdoption, [Al_animalId, Ar_adopterSsn, adoptionDate], (err) => {
+            if (err) {
+                console.error('Error inserting adoption:', err);
+                return res.status(500).send('Failed to insert adoption');
+            }
+
+            // Step 3: update animal status
+            db.query(`UPDATE animal SET adoptionStatus = 'unavailable' WHERE animalId = ?`, [Al_animalId], (err) => {
+                if (err) {
+                    console.error('Error updating animal status:', err);
+                    return res.status(500).send('Failed to update animal status');
+                }
+
+                res.sendStatus(200);
+            });
+        });
+    });
+});
+
+app.put('/adoptions', (req, res) => {
+    const { Al_animalId, Ar_adopterSsn, adoptionDate } = req.body;
+
+    const query = `
+        UPDATE adopted_by
+        SET adoptionDate = ?
+        WHERE Al_animalId = ? AND Ar_adopterSsn = ?
+    `;
+
+    db.query(query, [adoptionDate, Al_animalId, Ar_adopterSsn], (err, result) => {
+        if (err) {
+            console.error('Error updating adoption:', err);
+            return res.status(500).send('Failed to update adoption');
+        }
+        res.sendStatus(200);
+    });
+});
+
+app.delete('/adoptions', (req, res) => {
+    const { Al_animalId, Ar_adopterSsn } = req.body;
+
+    // Step 1: delete the record
+    db.query(
+        `DELETE FROM adopted_by WHERE Al_animalId = ? AND Ar_adopterSsn = ?`,
+        [Al_animalId, Ar_adopterSsn],
+        (err) => {
+            if (err) {
+                console.error('Error deleting adoption:', err);
+                return res.status(500).send('Failed to delete adoption');
+            }
+
+            // Step 2: set animal to available
+            db.query(`UPDATE animal SET adoptionStatus = 'available' WHERE animalId = ?`, [Al_animalId], (err) => {
+                if (err) {
+                    console.error('Error updating animal status:', err);
+                    return res.status(500).send('Failed to update animal status');
+                }
+                res.sendStatus(200);
+            });
+        }
+    );
+});
+
+app.get('/medical-history', async (req, res) => {
+    try {
+        const [rows] = await db.promise().query(`
+            SELECT 
+                a.animalId,
+                a.animalName,
+                a.animalSpecies,
+                a.animalBdate,
+                a.adoptionStatus,
+                vv.visitDate,
+                vv.animalDiagnosis,
+                v.vetName,
+                v.vetPhone
+            FROM animal a
+            LEFT JOIN vet_visits vv ON a.animalId = vv.Al_animalId
+            LEFT JOIN vet v ON vv.V_vetSsn = v.vetSsn
+            ORDER BY vv.visitDate DESC
+        `);
+
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching medical history:', error);
+        res.status(500).send('Failed to fetch medical history');
     }
 });
 
