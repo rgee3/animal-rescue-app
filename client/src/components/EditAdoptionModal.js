@@ -27,14 +27,15 @@ export default function EditAdoptionModal({ initialData, onClose, onSave, onDele
         // Load current values
         if (initialData) {
             setForm({
-                Al_animalId: initialData.Al_animalId || '',
-                Ar_adopterSsn: initialData.Ar_adopterSsn || '',
+                Al_animalId: initialData.animalId || '',
+                Ar_adopterSsn: initialData.adopterSsn || '',
                 adopterName: initialData.adopterName || '',
                 adopterBdate: formatDate(initialData.adopterBdate),
                 adopterPhone: initialData.adopterPhone || '',
                 adopterAddress: initialData.adopterAddress || '',
                 adoptionDate: formatDate(initialData.adoptionDate)
             });
+
         }
     }, [initialData]);
 
@@ -44,6 +45,7 @@ export default function EditAdoptionModal({ initialData, onClose, onSave, onDele
     };
 
     const handleSubmit = () => {
+        console.log("Editing adoption, data being submitted:", form);
         onSave(form);
     };
 
@@ -56,6 +58,7 @@ export default function EditAdoptionModal({ initialData, onClose, onSave, onDele
     return (
         <div className="modal">
             <div className="modal-content">
+
                 <h2>Edit Adoption</h2>
 
                 <label>Animal:</label>

@@ -75,7 +75,7 @@ export default function MainDashboard() {
     }, [view]);
 
     const handleAddAdoption = (data) => {
-        fetch('/adoptions', {
+        fetch('http://localhost:3001/adoptions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -86,18 +86,22 @@ export default function MainDashboard() {
     };
 
     const handleEditAdoption = (data) => {
-        fetch('/adoptions', {
+        fetch('http://localhost:3001/adoptions', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
-        }).then(() => {
-            setShowEditAdoptionModal(false);
-            loadAdoptions();
+        }).then((res) => {
+            if (res.ok) {
+                setShowEditAdoptionModal(false);
+                loadAdoptions(); // ← make sure this is defined!
+            } else {
+                alert('Failed to update adoption');
+            }
         });
     };
 
     const handleDeleteAdoption = (data) => {
-        fetch('/adoptions', {
+        fetch('http://localhost:3001/adoptions', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -108,6 +112,12 @@ export default function MainDashboard() {
     };
 
 
+    const loadMedicalHistory = () => {
+        fetch('http://localhost:3001/medical-history')
+            .then(res => res.json())
+            .then(data => setMedicalHistory(data))
+            .catch(err => console.error('Error loading medical history:', err));
+    };
 
 
     useEffect(() => {
@@ -146,12 +156,10 @@ export default function MainDashboard() {
 
     useEffect(() => {
         if (view === 'medical') {
-            fetch('http://localhost:3001/medical-history')
-                .then(res => res.json())
-                .then(data => setMedicalHistory(data))
-                .catch(err => console.error('Error loading medical history:', err));
+            loadMedicalHistory();
         }
     }, [view]);
+
 
     const handleAddMedicalRecord = async (form) => {
         try {
@@ -575,6 +583,7 @@ export default function MainDashboard() {
                 <>
                     <button onClick={() => setShowAddMedicalModal(true)}>➕ Add Medical Record</button>
                     <MedicalHistoryList
+                        medicalHistory={medicalHistory}
                         onMoreInfo={async (entry) => {
                             const res = await fetch(`http://localhost:3001/animals/${entry.animalId}/details`);
                             const fullEntry = await res.json();
@@ -588,14 +597,31 @@ export default function MainDashboard() {
             {showMedicalModal && selectedAnimal && (
                 <MedicalHistoryModal
                     entry={selectedAnimal}
-                    onClose={() => setShowMedicalModal(false)}
+                    onClose={() => {
+                        setShowMedicalModal(false);
+                        setSelectedAnimal(null);
+                        loadMedicalHistory();
+                    }}
+                    onRefresh={async () => {
+                        const refreshed = await fetch(`http://localhost:3001/animals/${selectedAnimal.animal.animalId}/details`);
+                        const data = await refreshed.json();
+                        setSelectedAnimal(data);
+                        loadMedicalHistory();
+                    }}
                 />
             )}
+
+
 
             {showAddMedicalModal && (
                 <AddMedicalRecordModal
                     onClose={() => setShowAddMedicalModal(false)}
                     onSave={handleAddMedicalRecord}
+                    onRefresh={() => {
+                        fetch(`http://localhost:3001/animals/${selectedAnimal.animal.animalId}/details`)
+                            .then(res => res.json())
+                            .then(data => setSelectedAnimal(data));
+                    }}
                 />
             )}
 

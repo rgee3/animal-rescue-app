@@ -416,7 +416,8 @@ app.delete('/vets/:ssn', async (req, res) => {
 app.get('/adoptions', async (req, res) => {
     try {
         const [rows] = await db.promise().query(
-            `SELECT ab.adoptionDate, 
+            `SELECT ab.adoptionDate,
+                    ab.Ar_adopterSsn AS adopterSsn,
                     a.animalId, a.animalName, a.animalSpecies,
                     ad.adopterName, ad.adopterPhone, ad.adopterAddress
              FROM adopted_by ab
@@ -483,23 +484,41 @@ app.post('/adoptions', (req, res) => {
     });
 });
 
-app.put('/adoptions', (req, res) => {
-    const { Al_animalId, Ar_adopterSsn, adoptionDate } = req.body;
+app.put('/adoptions', async (req, res) => {
+    const {
+        Al_animalId,
+        Ar_adopterSsn,
+        adopterName,
+        adopterBdate,
+        adopterPhone,
+        adopterAddress,
+        adoptionDate
+    } = req.body;
 
-    const query = `
-        UPDATE adopted_by
-        SET adoptionDate = ?
-        WHERE Al_animalId = ? AND Ar_adopterSsn = ?
-    `;
+    try {
+        // Update adopter table
+        await db.promise().query(
+            `UPDATE adopter 
+             SET adopterName = ?, adopterBdate = ?, adopterPhone = ?, adopterAddress = ?
+             WHERE adopterSsn = ?`,
+            [adopterName, adopterBdate || null, adopterPhone, adopterAddress, Ar_adopterSsn]
+        );
 
-    db.query(query, [adoptionDate, Al_animalId, Ar_adopterSsn], (err, result) => {
-        if (err) {
-            console.error('Error updating adoption:', err);
-            return res.status(500).send('Failed to update adoption');
-        }
+        // Update adopted_by table
+        await db.promise().query(
+            `UPDATE adopted_by 
+             SET adoptionDate = ?
+             WHERE Al_animalId = ? AND Ar_adopterSsn = ?`,
+            [adoptionDate, Al_animalId, Ar_adopterSsn]
+        );
+
         res.sendStatus(200);
-    });
+    } catch (err) {
+        console.error('Error updating adoption:', err);
+        res.status(500).send('Failed to update adoption');
+    }
 });
+
 
 app.delete('/adoptions', (req, res) => {
     const { Al_animalId, Ar_adopterSsn } = req.body;
@@ -586,6 +605,64 @@ app.post('/vet_visits', async (req, res) => {
     }
 });
 
+app.put('/vaccinations', async (req, res) => {
+    const {
+        animalId,
+        oldVaccineName,
+        oldVaccineLot,
+        vaccineName,
+        vaccineDate,
+        vaccineLot
+    } = req.body;
+
+    try {
+        const matchLot = oldVaccineLot ? 'vaccineLotNumber = ?' : 'vaccineLotNumber IS NULL';
+        const query = `
+            UPDATE vaccinations
+            SET vaccineName = ?, vaccineDate = ?, vaccineLotNumber = ?
+            WHERE Al_animalId = ? AND vaccineName = ? AND ${matchLot}
+        `;
+
+        const params = oldVaccineLot
+            ? [vaccineName, vaccineDate || null, vaccineLot || null, animalId, oldVaccineName, oldVaccineLot]
+            : [vaccineName, vaccineDate || null, vaccineLot || null, animalId, oldVaccineName];
+
+        const [result] = await db.promise().query(query, params);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Vaccination not found or unchanged' });
+        }
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error updating vaccination:', err);
+        res.status(500).send('Failed to update vaccination');
+    }
+});
+
+
+app.put('/vet_visits', async (req, res) => {
+    const { animalId, originalDate, visitDate, diagnosis } = req.body;
+
+    try {
+        const [result] = await db.promise().query(
+            `UPDATE vet_visits
+             SET visitDate = ?, animalDiagnosis = ?
+             WHERE Al_animalId = ? AND visitDate = ?`,
+            [visitDate.split('T')[0], diagnosis || null, animalId, originalDate.split('T')[0]]
+
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Vet visit not found');
+        }
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error updating vet visit:', err);
+        res.status(500).send('Failed to update vet visit');
+    }
+});
 
 
 // LISTEN

@@ -28,6 +28,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                             <p><strong>Birthdate:</strong> {animal.animalBdate?.split('T')[0]}</p>
                             <p><strong>Status:</strong> {animal.adoptionStatus}</p>
                             <p><strong>Arrival Date:</strong> {animal.arrivalDate?.split('T')[0]}</p>
+
                         </div>
                     )}
 

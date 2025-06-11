@@ -76,8 +76,16 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
                         <label>Vaccine Date:</label>
                         <input type="date" name="vaccineDate" value={form.vaccineDate} onChange={handleChange} />
 
-                        <label>Lot Number (optional):</label>
-                        <input name="vaccineLot" value={form.vaccineLot} onChange={handleChange} />
+                        <label>Lot Number*:</label>
+                        <input
+                            type="text"
+                            name="vaccineLot"
+                            value={form.vaccineLot}
+                            onChange={handleChange}
+                            placeholder="Lot Number"
+                            required
+                        />
+
                     </>
                 )}
 
