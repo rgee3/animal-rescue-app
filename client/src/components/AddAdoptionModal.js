@@ -1,5 +1,5 @@
 // src/components/AddAdoptionModal.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AddAdoptionModal.css';
 
 export default function AddAdoptionModal({ onClose, onSave }) {
@@ -12,6 +12,18 @@ export default function AddAdoptionModal({ onClose, onSave }) {
         adopterAddress: '',
         adoptionDate: ''
     });
+
+    const [availableAnimals, setAvailableAnimals] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/animals?status=available')
+            .then(res => res.json())
+            .then(data => setAvailableAnimals(data))
+            .catch(err => {
+                console.error('Failed to fetch available animals:', err);
+                alert('Error fetching available animals.');
+            });
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,12 +39,20 @@ export default function AddAdoptionModal({ onClose, onSave }) {
             <div className="modal-content">
                 <h2>Add New Adoption</h2>
 
-                <label>Animal ID:</label>
-                <input
+                <label>Select Animal*:</label>
+                <select
                     name="Al_animalId"
                     value={form.Al_animalId}
                     onChange={handleChange}
-                />
+                    required
+                >
+                    <option value="">-- Choose an animal --</option>
+                    {availableAnimals.map(animal => (
+                        <option key={animal.animalId} value={animal.animalId}>
+                            {animal.animalName} (ID: {animal.animalId})
+                        </option>
+                    ))}
+                </select>
 
                 <label>Adopter SSN:</label>
                 <input name="Ar_adopterSsn" value={form.Ar_adopterSsn} onChange={handleChange} />
