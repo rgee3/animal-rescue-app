@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './MedicalHistoryModal.css'; // reuse existing styling
+import './MedicalHistoryModal.css';
 
 export default function AddMedicalRecordModal({ onClose, onSave }) {
     const [animals, setAnimals] = useState([]);
@@ -7,7 +7,7 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
     const [vets, setVets] = useState([]);
     const [form, setForm] = useState({
         animalId: '',
-        recordType: 'vaccination', // or 'appointment'
+        recordType: 'vaccination',
         vaccineName: '',
         vaccineDate: '',
         vaccineLot: '',
@@ -17,7 +17,6 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
         diagnosis: ''
     });
 
-    // Load available animals, staff, and vets
     useEffect(() => {
         fetch('http://localhost:3001/animals?status=available')
             .then(res => res.json())
@@ -43,7 +42,7 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
     };
 
     const handleSubmit = () => {
-        onSave(form); // Send form to parent
+        onSave(form);
     };
 
     return (

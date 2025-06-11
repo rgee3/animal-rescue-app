@@ -17,7 +17,7 @@ export default function EditAnimalModal({ initialData, onClose, onSave, onDelete
             const formatDate = (dateStr) => {
                 if (!dateStr) return '';
                 const d = new Date(dateStr);
-                return d.toISOString().split('T')[0]; // yyyy-mm-dd
+                return d.toISOString().split('T')[0];
             };
 
             setForm({

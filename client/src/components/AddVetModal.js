@@ -1,6 +1,6 @@
 // src/components/AddVetModal.js
 import React, { useState } from 'react';
-import './AddAnimalModal.css'; // Reuse modal styling
+import './AddAnimalModal.css';
 
 export default function AddVetModal({ onClose, onSave }) {
     const [form, setForm] = useState({

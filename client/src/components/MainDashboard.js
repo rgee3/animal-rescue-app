@@ -189,7 +189,7 @@ export default function MainDashboard() {
             }
 
             setShowAddMedicalModal(false);
-            setView('medical'); // Optionally force refresh
+            setView('medical');
         } catch (err) {
             console.error('Error saving medical record:', err);
             alert('Failed to save medical record.');

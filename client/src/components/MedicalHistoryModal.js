@@ -136,11 +136,9 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
 
             if (!response.ok) throw new Error('Failed to update appointment');
 
-            await onRefresh(); // tell parent to update in case others depend on it
             const refreshed = await fetch(`http://localhost:3001/animals/${entry.animal.animalId}/details`);
             const updatedEntry = await refreshed.json();
-            setEntry(updatedEntry); // <- updates local modal state
-
+            setEntry(updatedEntry);
             setEditingApptIndex(null);
             setApptEditData({});
         } catch (err) {

@@ -1,6 +1,6 @@
 // src/components/EditAdoptionModal.js
 import React, { useState, useEffect } from 'react';
-import './AddAdoptionModal.css'; // Or your new AddAdoptionModal.css
+import './AddAdoptionModal.css';
 
 export default function EditAdoptionModal({ initialData, onClose, onSave, onDelete }) {
     const [animals, setAnimals] = useState([]);
@@ -15,16 +15,13 @@ export default function EditAdoptionModal({ initialData, onClose, onSave, onDele
     });
 
     useEffect(() => {
-        // Load animals — include *all* animals so current adopted one is also selectable
         fetch('http://localhost:3001/animals')
             .then(res => res.json())
             .then(data => setAnimals(data))
             .catch(err => console.error('Error loading animals', err));
 
-        // Format date for input[type=date]
         const formatDate = (d) => d ? new Date(d).toISOString().split('T')[0] : '';
 
-        // Load current values
         if (initialData) {
             setForm({
                 Al_animalId: initialData.animalId || '',

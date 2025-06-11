@@ -248,7 +248,6 @@ app.post('/staff', async (req, res) => {
             [staffSsn, staffName, staffPhone, staffSchedule, staffRole, supervisorSsn || null]
         );
 
-        // Return the newly inserted row
         const [newStaffRows] = await db.promise().query(
             'SELECT * FROM staff WHERE staffSsn = ?', [staffSsn]
         );
@@ -295,7 +294,7 @@ app.delete('/staff/:ssn', async (req, res) => {
             return res.status(404).json({ error: 'Staff member not found' });
         }
 
-        res.status(204).send(); // No content
+        res.status(204).send();
     } catch (err) {
         console.error('Error deleting staff:', err);
         res.status(500).json({ error: 'Failed to delete staff' });
@@ -446,7 +445,6 @@ app.post('/adoptions', (req, res) => {
         adoptionDate
     } = req.body;
 
-    // Step 1: insert adopter if not exists
     const insertAdopter = `
         INSERT INTO adopter (adopterSsn, adopterName, adopterBdate, adopterPhone, adopterAddress)
         VALUES (?, ?, ?, ?, ?)
@@ -459,7 +457,6 @@ app.post('/adoptions', (req, res) => {
             return res.status(500).send('Failed to insert adopter');
         }
 
-        // Step 2: insert adoption
         const insertAdoption = `
             INSERT INTO adopted_by (Al_animalId, Ar_adopterSsn, adoptionDate)
             VALUES (?, ?, ?)
@@ -471,7 +468,6 @@ app.post('/adoptions', (req, res) => {
                 return res.status(500).send('Failed to insert adoption');
             }
 
-            // Step 3: update animal status
             db.query(`UPDATE animal SET adoptionStatus = 'unavailable' WHERE animalId = ?`, [Al_animalId], (err) => {
                 if (err) {
                     console.error('Error updating animal status:', err);
@@ -496,7 +492,6 @@ app.put('/adoptions', async (req, res) => {
     } = req.body;
 
     try {
-        // Update adopter table
         await db.promise().query(
             `UPDATE adopter 
              SET adopterName = ?, adopterBdate = ?, adopterPhone = ?, adopterAddress = ?
@@ -504,7 +499,6 @@ app.put('/adoptions', async (req, res) => {
             [adopterName, adopterBdate || null, adopterPhone, adopterAddress, Ar_adopterSsn]
         );
 
-        // Update adopted_by table
         await db.promise().query(
             `UPDATE adopted_by 
              SET adoptionDate = ?
@@ -523,7 +517,6 @@ app.put('/adoptions', async (req, res) => {
 app.delete('/adoptions', (req, res) => {
     const { Al_animalId, Ar_adopterSsn } = req.body;
 
-    // Step 1: delete the record
     db.query(
         `DELETE FROM adopted_by WHERE Al_animalId = ? AND Ar_adopterSsn = ?`,
         [Al_animalId, Ar_adopterSsn],
@@ -533,7 +526,6 @@ app.delete('/adoptions', (req, res) => {
                 return res.status(500).send('Failed to delete adoption');
             }
 
-            // Step 2: set animal to available
             db.query(`UPDATE animal SET adoptionStatus = 'available' WHERE animalId = ?`, [Al_animalId], (err) => {
                 if (err) {
                     console.error('Error updating animal status:', err);
