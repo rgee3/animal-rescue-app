@@ -4,9 +4,8 @@ import './AnimalDetailModal.css';
 
 export default function AnimalDetailModal({ animal, details, onClose, onEditRequest }) {
     const [activeTab, setActiveTab] = useState('info');
-
-
     const { vaccinations = [], vetVisits = [] } = details;
+    const caretakers = animal.caretakers || [];
 
     return (
         <div className="modal-overlay">
@@ -29,6 +28,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                             <p><strong>Birthdate:</strong> {animal.animalBdate?.split('T')[0]}</p>
                             <p><strong>Status:</strong> {animal.adoptionStatus}</p>
                             <p><strong>Arrival Date:</strong> {animal.arrivalDate?.split('T')[0]}</p>
+                            <p><strong>Caretakers:</strong> {caretakers.length > 0 ? caretakers.join(', ') : 'Unassigned'}</p>
                         </div>
                     )}
 
@@ -39,7 +39,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                                 <ul style={{ paddingLeft: '1.2rem', textAlign: 'left' }}>
                                     {vaccinations.map((vax, index) => (
                                         <li key={index}>
-                                            {vax.vaccineName} on {vax.vaccineDate?.split('T')[0]}
+                                            {vax.vaccineName} on {vax.vaccinationDate?.split('T')[0]}
                                         </li>
                                     ))}
                                 </ul>
@@ -57,6 +57,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                                             <strong>Phone:</strong> {visit.vetPhone}<br />
                                             <strong>Diagnosis:</strong> {visit.animalDiagnosis}<br />
                                             <strong>Next Checkup:</strong> {new Date(visit.lastCheckup).toLocaleDateString()}
+
                                         </li>
                                     ))}
                                 </ul>

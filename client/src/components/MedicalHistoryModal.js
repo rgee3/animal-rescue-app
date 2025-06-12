@@ -31,14 +31,12 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
         animalSpecies,
         animalBdate,
         adoptionStatus,
-        vetName,
-        vetPhone,
-        vetAddress,
         animalGender,
         isSpayedOrNeutered
     } = entry.animal;
 
-    const { caretakerName } = entry.animal;
+    const { caretakers = [] } = entry.animal;
+    const { vetName, vetPhone, vetAddress } = entry;
 
     const vaccinations = entry.vaccinations || [];
     const vetVisits = entry.vetVisits || [];
@@ -234,7 +232,7 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
                             )}
 
                             <p><strong>Adoption Status:</strong> {adoptionStatus}</p>
-                            <p><strong>Caretaker:</strong> {caretakerName || 'Unassigned'}</p>
+                            <p><strong>Caretakers:</strong> {caretakers.length > 0 ? caretakers.join(', ') : 'Unassigned'}</p>
                         </section>
 
                         <section>

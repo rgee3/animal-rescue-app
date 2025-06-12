@@ -220,7 +220,7 @@ export default function MainDashboard() {
                                 const response = await fetch(`http://localhost:3001/animals/${animal.animalId}/details`);
                                 const data = await response.json();
                                 setAnimalDetails(data);
-                                setSelectedAnimal(animal);
+                                setSelectedAnimal(data.animal);
                             } catch (err) {
                                 console.error('Error fetching details:', err);
                             }

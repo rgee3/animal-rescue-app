@@ -14,7 +14,6 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
         animalDiagnosis,
         vetName,
         vetPhone,
-        caretakerName
     } = entry;
 
     const calculateAge = (birthdate) => {
@@ -36,7 +35,7 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
             <p><strong>Health:</strong> {animalDiagnosis || 'No current diagnosis'}</p>
             <p><strong>Next Visit:</strong> {nextVisitDate ? nextVisitDate.split('T')[0] : 'None scheduled'}</p>
             <p><strong>Vet:</strong> {vetName || 'N/A'} ({vetPhone || 'No phone'})</p>
-            <p><strong>Caretaker:</strong> {caretakerName || 'Unassigned'}</p>
+            <p><strong>Caretakers:</strong> {entry.caretakers || 'Unassigned'}</p>
             <button onClick={onMoreInfo}>More Info</button>
 
         </div>

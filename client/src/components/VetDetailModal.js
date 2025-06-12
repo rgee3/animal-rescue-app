@@ -16,7 +16,8 @@ export default function VetDetailModal({ vet, details, onClose }) {
                     {details.animalsSeen.length > 0 ? (
                         details.animalsSeen.map((a) => (
                             <li key={a.animalId}>
-                                {a.animalName} (Visited on {a.visitDate})
+                                {a.animalName} (Visited on {new Date(a.visitDate).toISOString().split('T')[0]})
+
                             </li>
                         ))
                     ) : (

@@ -56,11 +56,15 @@ app.get('/animals/:id/details', async (req, res) => {
         );
 
         const [vetVisits] = await db.promise().query(
-            `SELECT vv.visitDate, vv.lastCheckup, vv.animalDiagnosis, v.vetName, v.vetPhone, v.vetSchedule
+            `SELECT vv.visitDate, vv.lastCheckup, vv.animalDiagnosis, v.vetName, v.vetPhone, v.vetSchedule, v.vetAddress
              FROM vet_visits vv
                       JOIN vet v ON vv.V_vetSsn = v.vetSsn
-             WHERE vv.Al_animalId = ?`, [animalId]
+             WHERE vv.Al_animalId = ?
+            ORDER BY vv.visitDate DESC`, [animalId]
+            
         );
+
+        const latestVisit = vetVisits[0] || {};
 
         const [adoptionHistory] = await db.promise().query(
             `SELECT ab.adoptionDate, a.adopterName, a.adopterPhone, a.adopterAddress
@@ -72,19 +76,24 @@ app.get('/animals/:id/details', async (req, res) => {
         const [caretakerRows] = await db.promise().query(
             `SELECT s.staffName
              FROM cares_for cf
-             JOIN staff s ON cf.St_staffSsn = s.staffSsn
-             WHERE cf.Al_animalId = ?`, [animalId]
+                      JOIN staff s ON cf.St_staffSsn = s.staffSsn
+             WHERE cf.Al_animalId = ?`,
+            [animalId]
         );
 
-        const caretakerName = caretakerRows.length > 0 ? caretakerRows[0].staffName : null;
+        const caretakers = caretakerRows.map(row => row.staffName);
+
 
         res.json({
             animal: {
                 ...animalRows[0],
-                caretakerName
+                caretakers
             },
             vaccinations,
             vetVisits,
+            vetName: latestVisit.vetName || null,
+            vetPhone: latestVisit.vetPhone || null,
+            vetAddress: latestVisit.vetAddress || null,
             adoptions: adoptionHistory
         });
     } catch (error) {
@@ -619,11 +628,11 @@ app.get('/medical-history', async (req, res) => {
                 a.isSpayedOrNeutered,
                 a.animalBdate,
                 a.adoptionStatus,
-                v.vetName,
-                v.vetPhone,
-                vv.animalDiagnosis,
-                vv.visitDate AS nextVisitDate,
-                s.staffName AS caretakerName
+                MAX(v.vetName) AS vetName,
+                MAX(v.vetPhone) AS vetPhone,
+                MAX(vv.animalDiagnosis) AS animalDiagnosis,
+                MAX(vv.visitDate) AS nextVisitDate,
+                GROUP_CONCAT(DISTINCT s.staffName SEPARATOR ', ') AS caretakers
             FROM animal a
                      LEFT JOIN (
                 SELECT Al_animalId, MAX(visitDate) AS latestVisit
@@ -634,7 +643,10 @@ app.get('/medical-history', async (req, res) => {
                      LEFT JOIN vet v ON vv.V_vetSsn = v.vetSsn
                      LEFT JOIN cares_for cf ON a.animalId = cf.Al_animalId
                      LEFT JOIN staff s ON cf.St_staffSsn = s.staffSsn
-                ORDER BY vv.visitDate DESC
+            GROUP BY a.animalId
+            ORDER BY nextVisitDate DESC
+
+
         `);
 
         res.json(rows);
