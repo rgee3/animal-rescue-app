@@ -5,6 +5,7 @@ import './AddAnimalModal.css';
 export default function AddAnimalModal({ onClose, onSave }) {
     const [form, setForm] = useState({
         animalName: '',
+        animalGender: '',
         animalSpecies: '',
         animalBreed: '',
         animalBdate: '',
@@ -44,6 +45,24 @@ export default function AddAnimalModal({ onClose, onSave }) {
                             <option value="unavailable">Unavailable</option>
                         </select>
                     </label>
+                    <label>
+                        Gender:
+                        <select name="animalGender" value={form.animalGender} onChange={handleChange}>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Spayed/Neutered:
+                        <select name="isSpayedOrNeutered" value={form.isSpayedOrNeutered} onChange={handleChange}>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </label>
+
                     <button type="submit">Save</button>
                 </form>
             </div>

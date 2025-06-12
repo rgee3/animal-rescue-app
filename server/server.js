@@ -87,18 +87,20 @@ app.get('/animals/:id/details', async (req, res) => {
 app.post('/animals', async (req, res) => {
     const {
         animalName,
+        animalGender,
         animalSpecies,
         animalBreed,
         animalBdate,
         adoptionStatus,
+        isSpayedOrNeutered,
         arrivalDate
     } = req.body;
 
     try {
         const [result] = await db.promise().query(
-            `INSERT INTO animal (animalName, animalSpecies, animalBreed, animalBdate, adoptionStatus, arrivalDate)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [animalName, animalSpecies, animalBreed, animalBdate, adoptionStatus, arrivalDate || null]
+            `INSERT INTO animal (animalName, animalGender, animalSpecies, animalBreed, animalBdate, adoptionStatus, isSpayedOrNeutered, arrivalDate)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [animalName, animalGender, animalSpecies, animalBreed, animalBdate, adoptionStatus, isSpayedOrNeutered, arrivalDate || null]
         );
 
         const newAnimalId = result.insertId;
@@ -120,10 +122,12 @@ app.put('/animals/:id', async (req, res) => {
     const animalId = req.params.id;
     const {
         animalName,
+        animalGender,
         animalSpecies,
         animalBreed,
         animalBdate,
         adoptionStatus,
+        isSpayedOrNeutered,
         arrivalDate
     } = req.body;
 
@@ -134,10 +138,12 @@ app.put('/animals/:id', async (req, res) => {
              WHERE animalId = ?`,
             [
                 animalName,
+                animalGender,
                 animalSpecies,
                 animalBreed,
                 animalBdate ? animalBdate.split('T')[0] : null,
                 adoptionStatus,
+                isSpayedOrNeutered,
                 arrivalDate ? arrivalDate.split('T')[0] : null,
                 animalId
             ]
@@ -568,7 +574,7 @@ app.post('/vaccinations', async (req, res) => {
 
     try {
         await db.promise().query(
-            `INSERT INTO vaccinations (Al_animalId, vaccineName, vaccineDate, vaccineLotNumber)
+            `INSERT INTO vaccinations (Al_animalId, vaccineName, vaccinationDate, vaccineLotNumber)
              VALUES (?, ?, ?, ?);`,
             [animalId, vaccineName, vaccineDate, vaccineLot || null]
         );
@@ -611,7 +617,7 @@ app.put('/vaccinations', async (req, res) => {
         const matchLot = oldVaccineLot ? 'vaccineLotNumber = ?' : 'vaccineLotNumber IS NULL';
         const query = `
             UPDATE vaccinations
-            SET vaccineName = ?, vaccineDate = ?, vaccineLotNumber = ?
+            SET vaccineName = ?, vaccinationDate = ?, vaccineLotNumber = ?
             WHERE Al_animalId = ? AND vaccineName = ? AND ${matchLot}
         `;
 

@@ -5,6 +5,7 @@ export default function EditAnimalModal({ initialData, onClose, onSave, onDelete
     const [form, setForm] = useState({
         animalId: '',
         animalName: '',
+        animalGender: '',
         animalSpecies: '',
         animalBreed: '',
         animalBdate: '',
@@ -23,10 +24,12 @@ export default function EditAnimalModal({ initialData, onClose, onSave, onDelete
             setForm({
                 animalId: initialData.animalId || '',
                 animalName: initialData.animalName || '',
+                animalGender: initialData.animalGender || '',
                 animalSpecies: initialData.animalSpecies || '',
                 animalBreed: initialData.animalBreed || '',
                 animalBdate: formatDate(initialData.animalBdate),
                 adoptionStatus: initialData.adoptionStatus || 'available',
+                isSpayedOrNeutered: initialData.isSpayedOrNeutered || '',
                 arrivalDate: formatDate(initialData.arrivalDate)
             });
         }
@@ -63,6 +66,24 @@ export default function EditAnimalModal({ initialData, onClose, onSave, onDelete
                             <option value="unavailable">Unavailable</option>
                         </select>
                     </label>
+                    <label>
+                        Gender:
+                        <select name="animalGender" value={form.animalGender} onChange={handleChange}>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Spayed/Neutered:
+                        <select name="isSpayedOrNeutered" value={form.isSpayedOrNeutered} onChange={handleChange}>
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </label>
+
                     <button type="submit">Update</button>
                     <button
                         type="button"
