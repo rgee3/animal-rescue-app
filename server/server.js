@@ -110,7 +110,16 @@ app.post('/animals', async (req, res) => {
         const [result] = await db.promise().query(
             `INSERT INTO animal (animalName, animalGender, animalSpecies, animalBreed, animalBdate, adoptionStatus, isSpayedOrNeutered, arrivalDate)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [animalName, animalGender, animalSpecies, animalBreed, animalBdate, adoptionStatus, isSpayedOrNeutered, arrivalDate || null]
+            [
+                animalName,
+                animalGender || null,
+                animalSpecies,
+                animalBreed || null,
+                animalBdate ? animalBdate.split('T')[0] : null,
+                adoptionStatus,
+                isSpayedOrNeutered || 'no',
+                arrivalDate ? arrivalDate.split('T')[0] : null
+            ]
         );
 
         const newAnimalId = result.insertId;
@@ -144,7 +153,7 @@ app.put('/animals/:id', async (req, res) => {
     try {
         const [result] = await db.promise().query(
             `UPDATE animal
-             SET animalName = ?, animal.animalGender = ?, animalSpecies = ?, animalBreed = ?, animalBdate = ?, adoptionStatus = ?, animal.isSpayedOrNeutered = ?, arrivalDate = ?
+             SET animalName = ?, animalGender = ?, animalSpecies = ?, animalBreed = ?, animalBdate = ?, adoptionStatus = ?, animal.isSpayedOrNeutered = ?, arrivalDate = ?
              WHERE animalId = ?`,
             [
                 animalName,

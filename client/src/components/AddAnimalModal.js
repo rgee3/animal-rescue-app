@@ -21,10 +21,18 @@ export default function AddAnimalModal({ onClose, onSave }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!form.animalName || !form.animalSpecies || !form.animalBdate || !form.adoptionStatus) {
+        if (
+            !form.animalName ||
+            !form.animalSpecies ||
+            !form.animalGender ||
+            !form.animalBdate ||
+            !form.adoptionStatus ||
+            !form.isSpayedOrNeutered
+        ) {
             alert('Please fill out all required fields.');
             return;
         }
+
         console.log("Submitting form:", form);
         onSave(form);
     };
