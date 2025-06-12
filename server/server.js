@@ -64,16 +64,25 @@ app.get('/animals/:id/details', async (req, res) => {
 
         const [adoptionHistory] = await db.promise().query(
             `SELECT ab.adoptionDate, a.adopterName, a.adopterPhone, a.adopterAddress
-            FROM adopted_by ab
-            JOIN adopter a ON ab.Ar_adopterSsn = a.adopterSsn
-            WHERE ab.Al_animalId = ?`,
-            [animalId]
+             FROM adopted_by ab
+                      JOIN adopter a ON ab.Ar_adopterSsn = a.adopterSsn
+             WHERE ab.Al_animalId = ?`, [animalId]
         );
 
+        const [caretakerRows] = await db.promise().query(
+            `SELECT s.staffName
+             FROM cares_for cf
+             JOIN staff s ON cf.St_staffSsn = s.staffSsn
+             WHERE cf.Al_animalId = ?`, [animalId]
+        );
 
+        const caretakerName = caretakerRows.length > 0 ? caretakerRows[0].staffName : null;
 
         res.json({
-            animal: animalRows[0],
+            animal: {
+                ...animalRows[0],
+                caretakerName
+            },
             vaccinations,
             vetVisits,
             adoptions: adoptionHistory
@@ -83,6 +92,7 @@ app.get('/animals/:id/details', async (req, res) => {
         res.status(500).send('Server error retrieving animal details');
     }
 });
+
 
 app.post('/animals', async (req, res) => {
     const {
@@ -546,20 +556,30 @@ app.delete('/adoptions', (req, res) => {
 app.get('/medical-history', async (req, res) => {
     try {
         const [rows] = await db.promise().query(`
-            SELECT 
+            SELECT
                 a.animalId,
                 a.animalName,
                 a.animalSpecies,
+                a.animalGender,
+                a.isSpayedOrNeutered,
                 a.animalBdate,
                 a.adoptionStatus,
-                vv.visitDate,
-                vv.animalDiagnosis,
                 v.vetName,
-                v.vetPhone
+                v.vetPhone,
+                vv.animalDiagnosis,
+                vv.visitDate AS nextVisitDate,
+                s.staffName AS caretakerName
             FROM animal a
-            LEFT JOIN vet_visits vv ON a.animalId = vv.Al_animalId
-            LEFT JOIN vet v ON vv.V_vetSsn = v.vetSsn
-            ORDER BY vv.visitDate DESC
+                     LEFT JOIN (
+                SELECT Al_animalId, MAX(visitDate) AS latestVisit
+                FROM vet_visits
+                GROUP BY Al_animalId
+            ) latest_vv ON a.animalId = latest_vv.Al_animalId
+                     LEFT JOIN vet_visits vv ON a.animalId = vv.Al_animalId AND vv.visitDate = latest_vv.latestVisit
+                     LEFT JOIN vet v ON vv.V_vetSsn = v.vetSsn
+                     LEFT JOIN cares_for cf ON a.animalId = cf.Al_animalId
+                     LEFT JOIN staff s ON cf.St_staffSsn = s.staffSsn
+                ORDER BY vv.visitDate DESC
         `);
 
         res.json(rows);

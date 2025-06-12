@@ -5,7 +5,9 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
     const {
         animalId,
         animalName,
+        animalGender,
         animalSpecies,
+        isSpayedOrNeutered,
         animalBdate,
         adoptionStatus,
         nextVisitDate,
@@ -28,6 +30,8 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
             <h3>{animalName}</h3>
             <p><strong>Species:</strong> {animalSpecies}</p>
             <p><strong>Age:</strong> {calculateAge(animalBdate)}</p>
+            <p><strong>Gender:</strong> {animalGender}</p>
+            <p><strong>Spayed/Neutered:</strong> {isSpayedOrNeutered === 'yes' ? 'Yes' : 'No'}</p>
             <p><strong>Status:</strong> {adoptionStatus}</p>
             <p><strong>Health:</strong> {animalDiagnosis || 'No current diagnosis'}</p>
             <p><strong>Next Visit:</strong> {nextVisitDate ? nextVisitDate.split('T')[0] : 'None scheduled'}</p>

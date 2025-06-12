@@ -25,8 +25,9 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
         vetName,
         vetPhone,
         vetAddress,
-        caretakerName,
     } = entry.animal;
+
+    const { caretakerName } = entry.animal;
 
     const vaccinations = entry.vaccinations || [];
     const vetVisits = entry.vetVisits || [];
