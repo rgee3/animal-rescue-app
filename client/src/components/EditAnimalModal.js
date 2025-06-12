@@ -10,6 +10,7 @@ export default function EditAnimalModal({ initialData, onClose, onSave, onDelete
         animalBreed: '',
         animalBdate: '',
         adoptionStatus: 'available',
+        isSpayedOrNeutered: '',
         arrivalDate: ''
     });
 

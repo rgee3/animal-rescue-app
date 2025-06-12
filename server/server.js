@@ -144,7 +144,7 @@ app.put('/animals/:id', async (req, res) => {
     try {
         const [result] = await db.promise().query(
             `UPDATE animal
-             SET animalName = ?, animalSpecies = ?, animalBreed = ?, animalBdate = ?, adoptionStatus = ?, arrivalDate = ?
+             SET animalName = ?, animal.animalGender = ?, animalSpecies = ?, animalBreed = ?, animalBdate = ?, adoptionStatus = ?, animal.isSpayedOrNeutered = ?, arrivalDate = ?
              WHERE animalId = ?`,
             [
                 animalName,

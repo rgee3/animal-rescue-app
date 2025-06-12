@@ -10,6 +10,7 @@ export default function AddAnimalModal({ onClose, onSave }) {
         animalBreed: '',
         animalBdate: '',
         adoptionStatus: 'available',
+        isSpayedOrNeutered: '',
         arrivalDate: ''
     });
 
