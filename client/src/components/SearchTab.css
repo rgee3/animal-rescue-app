@@ -1,0 +1,53 @@
+/* src/components/SearchTab.css */
+
+.search-tab {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.search-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.search-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+}
+
+.search-form input,
+.search-form select {
+    padding: 6px;
+    font-size: 14px;
+}
+
+.search-form button {
+    grid-column: 1 / -1;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.search-results {
+    margin-top: 30px;
+}
+
+.search-results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.search-results th,
+.search-results td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.search-results th {
+    background-color: #f0f0f0;
+}

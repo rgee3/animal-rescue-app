@@ -778,6 +778,137 @@ app.patch('/animals/:id/gender-spay', async (req, res) => {
     }
 });
 
+app.post('/search', async (req, res) => {
+    const {
+        animalSpecies,
+        animalBreed,
+        animalGender,
+        adoptionStatus,
+        isSpayedOrNeutered,
+        vetName,
+        diagnosis,
+        visitStart,
+        visitEnd,
+        vaccineName,
+        vaccinationStart,
+        vaccinationEnd,
+        staffName,
+        staffRole,
+        adopterName,
+        adoptionStart,
+        adoptionEnd,
+    } = req.body;
+
+    // ... inside your POST route
+    let query = `
+        SELECT
+            a.animalId,                              
+            a.animalName,
+            a.animalSpecies,
+            a.animalBreed,
+            a.adoptionStatus,
+            MAX(ad.adopterName) AS adopterName,
+            GROUP_CONCAT(DISTINCT v.vetName) AS vetNames,
+            GROUP_CONCAT(DISTINCT vv.animalDiagnosis) AS diagnoses,
+            GROUP_CONCAT(DISTINCT s.staffName) AS staffNames
+        FROM ANIMAL a
+                 LEFT JOIN ADOPTED_BY ab ON a.animalId = ab.Al_animalId
+                 LEFT JOIN ADOPTER ad ON ab.Ar_adopterSsn = ad.adopterSsn
+                 LEFT JOIN VET_VISITS vv ON a.animalId = vv.Al_animalId
+                 LEFT JOIN VET v ON vv.V_vetSsn = v.vetSsn
+                 LEFT JOIN CARES_FOR cf ON a.animalId = cf.Al_animalId
+                 LEFT JOIN STAFF s ON cf.St_staffSsn = s.staffSsn
+                 LEFT JOIN VACCINATIONS vac ON a.animalId = vac.Al_animalId
+        WHERE 1 = 1
+    `;
+
+    const params = [];
+
+    if (animalSpecies) {
+        query += ` AND a.animalSpecies LIKE ?`;
+        params.push(`%${animalSpecies}%`);
+    }
+    if (animalBreed) {
+        query += ` AND a.animalBreed LIKE ?`;
+        params.push(`%${animalBreed}%`);
+    }
+    if (animalGender) {
+        query += ` AND a.animalGender = ?`;
+        params.push(animalGender);
+    }
+    if (adoptionStatus) {
+        query += ` AND a.adoptionStatus = ?`;
+        params.push(adoptionStatus);
+    }
+    if (isSpayedOrNeutered) {
+        query += ` AND a.isSpayedOrNeutered = ?`;
+        params.push(isSpayedOrNeutered);
+    }
+    if (vetName) {
+        query += ` AND v.vetName LIKE ?`;
+        params.push(`%${vetName}%`);
+    }
+    if (diagnosis) {
+        query += ` AND vv.animalDiagnosis LIKE ?`;
+        params.push(`%${diagnosis}%`);
+    }
+    if (visitStart) {
+        query += ` AND vv.visitDate >= ?`;
+        params.push(visitStart);
+    }
+    if (visitEnd) {
+        query += ` AND vv.visitDate <= ?`;
+        params.push(visitEnd);
+    }
+    if (vaccineName) {
+        query += ` AND vac.vaccineName LIKE ?`;
+        params.push(`%${vaccineName}%`);
+    }
+    if (vaccinationStart) {
+        query += ` AND vac.vaccinationDate >= ?`;
+        params.push(vaccinationStart);
+    }
+    if (vaccinationEnd) {
+        query += ` AND vac.vaccinationDate <= ?`;
+        params.push(vaccinationEnd);
+    }
+    if (staffName) {
+        query += ` AND s.staffName LIKE ?`;
+        params.push(`%${staffName}%`);
+    }
+    if (staffRole) {
+        query += ` AND s.staffRole = ?`;
+        params.push(staffRole);
+    }
+    if (adopterName) {
+        query += ` AND ad.adopterName LIKE ?`;
+        params.push(`%${adopterName}%`);
+    }
+    if (adoptionStart) {
+        query += ` AND ab.adoptionDate >= ?`;
+        params.push(adoptionStart);
+    }
+    if (adoptionEnd) {
+        query += ` AND ab.adoptionDate <= ?`;
+        params.push(adoptionEnd);
+    }
+
+    query += `
+    GROUP BY a.animalId, a.animalName, a.animalSpecies, a.animalBreed, a.adoptionStatus
+`;
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Search query failed:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(results);
+    });
+
+});
+
+
+
 // LISTEN
 app.listen(3001, () => {
     console.log('Server running on http://localhost:3001');
