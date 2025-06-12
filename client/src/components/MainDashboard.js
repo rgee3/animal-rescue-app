@@ -21,13 +21,10 @@ import MedicalHistoryList from './MedicalHistoryList';
 import MedicalHistoryModal from './MedicalHistoryModal';
 import AddMedicalRecordModal from './AddMedicalRecordModal';
 
-
-
-
-
-
 export default function MainDashboard() {
-    const [view, setView] = useState('animals');
+    const [view, setView] = useState(() => {
+        return localStorage.getItem('selectedView') || 'animals';
+    });
     const [animals, setAnimals] = useState([]);
     const [staff, setStaff] = useState([]);
 
@@ -60,6 +57,10 @@ export default function MainDashboard() {
     const [showMedicalModal, setShowMedicalModal] = useState(false);
     const [showAddMedicalModal, setShowAddMedicalModal] = useState(false);
 
+    const handleSetView = (newView) => {
+        setView(newView);
+        localStorage.setItem('selectedView', newView);
+    };
 
     const loadAdoptions = () => {
         fetch('http://localhost:3001/adoptions')
@@ -189,7 +190,7 @@ export default function MainDashboard() {
             }
 
             setShowAddMedicalModal(false);
-            setView('medical');
+            handleSetView('medical');
         } catch (err) {
             console.error('Error saving medical record:', err);
             alert('Failed to save medical record.');
@@ -200,11 +201,11 @@ export default function MainDashboard() {
     return (
         <div>
             <div className="view-toggle-buttons">
-                <button onClick={() => setView('animals')}>Animals</button>
-                <button onClick={() => setView('staff')}>Staff</button>
-                <button onClick={() => setView('vets')}>Vets</button>
-                <button onClick={() => setView('adoptions')}>Adoptions</button>
-                <button onClick={() => setView('medical')}>Medical History</button>
+                <button onClick={() => handleSetView('animals')}>Animals</button>
+                <button onClick={() => handleSetView('staff')}>Staff</button>
+                <button onClick={() => handleSetView('vets')}>Vets</button>
+                <button onClick={() => handleSetView('adoptions')}>Adoptions</button>
+                <button onClick={() => handleSetView('medical')}>Medical History</button>
 
 
             </div>
@@ -624,8 +625,6 @@ export default function MainDashboard() {
                     }}
                 />
             )}
-
-
 
 
 

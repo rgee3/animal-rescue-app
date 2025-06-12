@@ -49,7 +49,7 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
         setEditingVaxIndex(index);
         setVaxEditData({
             vaccineName: vax.vaccineName || '',
-            vaccineDate: vax.vaccineDate ? vax.vaccineDate.split('T')[0] : '',
+            vaccinationDate: vax.vaccinationDate ? vax.vaccinationDate.split('T')[0] : '',
             vaccineLot: vax.vaccineLotNumber || ''
         });
     };
@@ -77,7 +77,7 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
             oldVaccineName: original.vaccineName,
             oldVaccineLot: original.vaccineLotNumber || null,
             vaccineName: vaxEditData.vaccineName,
-            vaccineDate: vaxEditData.vaccineDate,
+            vaccinationDate: vaxEditData.vaccinationDate,
             vaccineLot: vaxEditData.vaccineLot || null
         };
 
@@ -200,8 +200,8 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
                                                 />
                                                 <input
                                                     type="date"
-                                                    name="vaccineDate"
-                                                    value={vaxEditData.vaccineDate?.split('T')[0] || ''}
+                                                    name="vaccinationDate"
+                                                    value={vaxEditData.vaccinationDate?.split('T')[0] || ''}
                                                     onChange={handleVaxChange}
                                                 />
                                                 <input
@@ -217,7 +217,7 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
                                             </>
                                         ) : (
                                             <>
-                                                {vax.vaccineName} — {formatDate(vax.vaccineDate)}
+                                                {vax.vaccineName} — {formatDate(vax.vaccinationDate)}
                                                 {vax.vaccineLot && ` (Lot #: ${vax.vaccineLot})`}
                                                 <button onClick={() => startEditVax(i, vax)}>Edit</button>
                                             </>

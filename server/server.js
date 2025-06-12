@@ -599,13 +599,13 @@ app.get('/medical-history', async (req, res) => {
 });
 
 app.post('/vaccinations', async (req, res) => {
-    const { animalId, vaccineName, vaccineDate, vaccineLot } = req.body;
+    const { animalId, vaccineName, vaccinationDate, vaccineLot } = req.body;
 
     try {
         await db.promise().query(
             `INSERT INTO vaccinations (Al_animalId, vaccineName, vaccinationDate, vaccineLotNumber)
              VALUES (?, ?, ?, ?);`,
-            [animalId, vaccineName, vaccineDate, vaccineLot || null]
+            [animalId, vaccineName, vaccinationDate, vaccineLot || null]
         );
 
         res.sendStatus(200);
@@ -638,7 +638,7 @@ app.put('/vaccinations', async (req, res) => {
         oldVaccineName,
         oldVaccineLot,
         vaccineName,
-        vaccineDate,
+        vaccinationDate,
         vaccineLot
     } = req.body;
 
@@ -651,8 +651,8 @@ app.put('/vaccinations', async (req, res) => {
         `;
 
         const params = oldVaccineLot
-            ? [vaccineName, vaccineDate || null, vaccineLot || null, animalId, oldVaccineName, oldVaccineLot]
-            : [vaccineName, vaccineDate || null, vaccineLot || null, animalId, oldVaccineName];
+            ? [vaccineName, vaccinationDate || null, vaccineLot || null, animalId, oldVaccineName, oldVaccineLot]
+            : [vaccineName, vaccinationDate || null, vaccineLot || null, animalId, oldVaccineName];
 
         const [result] = await db.promise().query(query, params);
 
