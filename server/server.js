@@ -799,17 +799,20 @@ app.post('/search', async (req, res) => {
         adoptionEnd,
     } = req.body;
 
-    // ... inside your POST route
     let query = `
         SELECT
-            a.animalId,                              
+            a.animalId,
             a.animalName,
             a.animalSpecies,
             a.animalBreed,
+            a.animalBdate,
+            a.isSpayedOrNeutered,
             a.adoptionStatus,
             MAX(ad.adopterName) AS adopterName,
-            GROUP_CONCAT(DISTINCT v.vetName) AS vetNames,
+            GROUP_CONCAT(DISTINCT CONCAT(vac.vaccineName, ' on ', DATE_FORMAT(vac.vaccinationDate, '%Y-%m-%d'))) AS vaccineNames,
+            MAX(vv.visitDate) AS latestVisitDate,
             GROUP_CONCAT(DISTINCT vv.animalDiagnosis) AS diagnoses,
+            MAX(CONCAT(v.vetName, ' | ', v.vetPhone, ' | ', v.vetAddress)) AS vetContactInfo,
             GROUP_CONCAT(DISTINCT s.staffName) AS staffNames
         FROM ANIMAL a
                  LEFT JOIN ADOPTED_BY ab ON a.animalId = ab.Al_animalId
@@ -820,6 +823,7 @@ app.post('/search', async (req, res) => {
                  LEFT JOIN STAFF s ON cf.St_staffSsn = s.staffSsn
                  LEFT JOIN VACCINATIONS vac ON a.animalId = vac.Al_animalId
         WHERE 1 = 1
+        
     `;
 
     const params = [];
@@ -894,8 +898,9 @@ app.post('/search', async (req, res) => {
     }
 
     query += `
-    GROUP BY a.animalId, a.animalName, a.animalSpecies, a.animalBreed, a.adoptionStatus
+    GROUP BY a.animalId, a.animalName, a.animalSpecies, a.animalBreed, a.animalBdate, a.isSpayedOrNeutered, a.adoptionStatus
 `;
+
 
     db.query(query, params, (err, results) => {
         if (err) {

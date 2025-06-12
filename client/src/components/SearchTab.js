@@ -10,7 +10,7 @@ export default function SearchTab() {
         adoptionStatus: '',
         isSpayedOrNeutered: '',
         vetName: '',
-        diagnosis: '',
+        animalDiagnosis: '',
         visitStart: '',
         visitEnd: '',
         vaccineName: '',
@@ -37,6 +37,7 @@ export default function SearchTab() {
                 body: JSON.stringify(filters)
             });
             const data = await res.json();
+            console.log('Search result:', data);
             setResults(data);
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -72,7 +73,7 @@ export default function SearchTab() {
                 </label>
 
                 <label>Vet Name: <input name="vetName" onChange={handleChange} /></label>
-                <label>Diagnosis: <input name="diagnosis" onChange={handleChange} /></label>
+                <label>Diagnosis: <input name="animalDiagnosis" onChange={handleChange} /></label>
                 <label>Vet Visit From: <input type="date" name="visitStart" onChange={handleChange} /></label>
                 <label>Vet Visit To: <input type="date" name="visitEnd" onChange={handleChange} /></label>
 
@@ -108,9 +109,12 @@ export default function SearchTab() {
                             <th>Animal</th>
                             <th>Species</th>
                             <th>Breed</th>
+                            <th>Spayed/Neutered</th>
                             <th>Status</th>
                             <th>Adopter</th>
                             <th>Vet</th>
+                            <th>Vaccines</th>
+                            <th>Last Visit</th>
                             <th>Diagnosis</th>
                             <th>Staff</th>
                         </tr>
@@ -121,14 +125,19 @@ export default function SearchTab() {
                                 <td>{row.animalName}</td>
                                 <td>{row.animalSpecies}</td>
                                 <td>{row.animalBreed}</td>
+                                <td>{row.isSpayedOrNeutered || '—'}</td>
                                 <td>{row.adoptionStatus}</td>
-                                <td>{row.adopterName}</td>
-                                <td>{row.vetName}</td>
-                                <td>{row.diagnosis}</td>
-                                <td>{row.staffName}</td>
+                                <td>{row.adopterName || '—'}</td>
+                                <td>{row.vetContactInfo || '—'}</td>
+                                <td>{row.vaccineNames || '—'}</td>
+                                <td>{row.latestVisitDate ? new Date(row.latestVisitDate).toLocaleDateString() : '—'}</td>
+                                <td>{row.diagnoses || '—'}</td>
+                                <td>{row.staffNames || '—'}</td>
                             </tr>
                         ))}
                         </tbody>
+
+
                     </table>
                 )}
             </div>
