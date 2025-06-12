@@ -170,7 +170,7 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
                             <h4>Basic Info</h4>
                             <p><strong>Species:</strong> {animalSpecies}</p>
                             <p><strong>Age:</strong> {calculateAge(animalBdate)}</p>
-                            <p><strong>Status:</strong> {adoptionStatus}</p>
+                            <p><strong>Adoption Status:</strong> {adoptionStatus}</p>
                             <p><strong>Caretaker:</strong> {caretakerName || 'Unassigned'}</p>
                         </section>
 

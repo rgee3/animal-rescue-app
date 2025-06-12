@@ -32,7 +32,7 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
             <p><strong>Age:</strong> {calculateAge(animalBdate)}</p>
             <p><strong>Gender:</strong> {animalGender}</p>
             <p><strong>Spayed/Neutered:</strong> {isSpayedOrNeutered === 'yes' ? 'Yes' : 'No'}</p>
-            <p><strong>Status:</strong> {adoptionStatus}</p>
+            <p><strong>Adoption Status:</strong> {adoptionStatus}</p>
             <p><strong>Health:</strong> {animalDiagnosis || 'No current diagnosis'}</p>
             <p><strong>Next Visit:</strong> {nextVisitDate ? nextVisitDate.split('T')[0] : 'None scheduled'}</p>
             <p><strong>Vet:</strong> {vetName || 'N/A'} ({vetPhone || 'No phone'})</p>
