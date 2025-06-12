@@ -119,7 +119,7 @@ export default function EditStaffModal({ initialData, onClose, onSave, onDelete 
                     .then(res => res.json())
                     .then(details => {
                         const caredIds = (details.caredAnimals || []).map(a => a.animalId);
-                        setAvailableAnimals(animalList); // optionally filter out assigned if needed
+                        setAvailableAnimals(animalList);
                         setAssignedAnimals(details.caredAnimals || []);
                     })
                     .catch(err => console.error('Error fetching staff details:', err));

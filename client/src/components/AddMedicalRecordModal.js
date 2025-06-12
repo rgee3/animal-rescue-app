@@ -9,7 +9,7 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
         animalId: '',
         recordType: 'vaccination',
         vaccineName: '',
-        vaccineDate: '',
+        vaccinationDate: '',
         vaccineLot: '',
         vetSsn: '',
         staffSsn: '',
@@ -42,6 +42,7 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
     };
 
     const handleSubmit = () => {
+        console.log('Submitting form data:', form);
         onSave(form);
     };
 
@@ -73,7 +74,7 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
                         <input name="vaccineName" value={form.vaccineName} onChange={handleChange} />
 
                         <label>Vaccine Date:</label>
-                        <input type="date" name="vaccineDate" value={form.vaccineDate} onChange={handleChange} />
+                        <input type="date" name="vaccinationDate" value={form.vaccinationDate} onChange={handleChange} />
 
                         <label>Lot Number*:</label>
                         <input
@@ -96,16 +97,6 @@ export default function AddMedicalRecordModal({ onClose, onSave }) {
                             {vets.map(vet => (
                                 <option key={vet.vetSsn} value={vet.vetSsn}>
                                     {vet.vetName}
-                                </option>
-                            ))}
-                        </select>
-
-                        <label>Staff:</label>
-                        <select name="staffSsn" value={form.staffSsn} onChange={handleChange}>
-                            <option value="">-- Select Staff --</option>
-                            {staffList.map(staff => (
-                                <option key={staff.staffSsn} value={staff.staffSsn}>
-                                    {staff.staffName} ({staff.staffRole})
                                 </option>
                             ))}
                         </select>

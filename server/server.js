@@ -660,6 +660,7 @@ app.post('/vaccinations', async (req, res) => {
     const { animalId, vaccineName, vaccinationDate, vaccineLot } = req.body;
 
     try {
+        console.log('Inserting vaccination with date:', vaccinationDate);
         await db.promise().query(
             `INSERT INTO vaccinations (Al_animalId, vaccineName, vaccinationDate, vaccineLotNumber)
              VALUES (?, ?, ?, ?);`,
