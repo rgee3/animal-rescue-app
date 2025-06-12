@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './AnimalDetailModal.css';
 
 const StaffDetailModal = ({ staff, details, onClose, onEditRequest }) => {
-    if (!staff || !details) return null;
-
     const { staffName, staffPhone, staffSchedule, staffRole } = staff;
-    const { supervisorName, caredAnimals } = details;
+    const supervisorName = details?.supervisorName || 'None';
+    const animalsCaredFor = details?.caredAnimals || [];
+
+    if (!staff || !details) return null;
 
     return (
         <div className="modal-overlay">
@@ -18,11 +19,11 @@ const StaffDetailModal = ({ staff, details, onClose, onEditRequest }) => {
                 <p><strong>Supervisor:</strong> {supervisorName || 'None'}</p>
 
                 <h3>Currently Caring For:</h3>
-                {caredAnimals && caredAnimals.length > 0 ? (
+                {animalsCaredFor && animalsCaredFor.length > 0 ? (
                     <ul>
-                        {caredAnimals.map((animal, index) => (
+                        {animalsCaredFor.map((animal, index) => (
                             <li key={index}>
-                                {animal.animalName} – {animal.animalSpecies} ({animal.animalBreed})
+                                {animal.animalName} – {animal.animalSpecies} {animal.animalBreed ? ` (${animal.animalBreed})` : ''}
                             </li>
                         ))}
                     </ul>

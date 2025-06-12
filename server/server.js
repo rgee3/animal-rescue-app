@@ -238,16 +238,18 @@ app.get('/staff/:ssn/details', async (req, res) => {
             }
         }
 
-        const [caredForRows] = await db.promise().query(
-            `SELECT a.animalId, a.animalName, a.animalSpecies
-             FROM cares_for cf
-             JOIN animal a ON cf.Al_animalId = a.animalId
-             WHERE cf.St_staffSsn = ?`, [staffSsn]
+        const [caredAnimals] = await db.promise().query(
+            `SELECT a.animalId, a.animalName, a.animalSpecies, a.animalBreed
+             FROM animal a
+                      JOIN cares_for c ON a.animalId = c.Al_animalId
+             WHERE c.St_staffSsn = ?`,
+            [staffSsn]
         );
+
 
         res.json({
             supervisorName,
-            animalsCaredFor: caredForRows
+            caredAnimals
         });
 
     } catch (error) {
@@ -326,6 +328,48 @@ app.delete('/staff/:ssn', async (req, res) => {
     }
 });
 
+app.post('/staff/:ssn/assign-animal', async (req, res) => {
+    const staffSsn = req.params.ssn;
+    const { animalId } = req.body;
+
+    try {
+        const [existing] = await db.promise().query(
+            `SELECT * FROM cares_for WHERE St_staffSsn = ? AND Al_animalId = ?`,
+            [staffSsn, animalId]
+        );
+
+        if (existing.length > 0) {
+            return res.status(409).json({ error: 'Animal already assigned to this staff member.' });
+        }
+
+        await db.promise().query(
+            'INSERT INTO cares_for (St_staffSsn, Al_animalId) VALUES (?, ?)',
+            [staffSsn, animalId]
+        );
+        res.status(200).json({ success: true });
+    } catch (err) {
+        console.error('Error assigning animal:', err);
+        res.status(500).json({ error: 'Failed to assign animal' });
+    }
+});
+
+app.delete('/staff/:ssn/unassign-animal', async (req, res) => {
+    const staffSsn = req.params.ssn;
+    const { animalId } = req.body;
+
+    try {
+        await db.promise().query(
+            `DELETE FROM cares_for WHERE St_staffSsn = ? AND Al_animalId = ?`,
+            [staffSsn, animalId]
+        );
+        res.sendStatus(204);
+    } catch (err) {
+        console.error('Error unassigning animal:', err);
+        res.status(500).json({ error: 'Failed to unassign animal' });
+    }
+});
+
+
 app.get('/vets', async (req, res) => {
     try {
         const [rows] = await db.promise().query('SELECT * FROM vet');
@@ -367,6 +411,8 @@ app.get('/vets/:ssn/details', async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve vet details' });
     }
 });
+
+
 
 app.post('/vets', async (req, res) => {
     const { vetSsn, vetName, vetPhone, vetSchedule, vetAddress } = req.body;

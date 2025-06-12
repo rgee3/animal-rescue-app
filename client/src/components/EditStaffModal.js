@@ -12,6 +12,12 @@ export default function EditStaffModal({ initialData, onClose, onSave, onDelete 
         supervisorSsn: ''
     });
 
+    const [availableAnimals, setAvailableAnimals] = useState([]);
+    const [selectedAnimalId, setSelectedAnimalId] = useState('');
+    const [assignedAnimals, setAssignedAnimals] = useState([]);
+
+
+
     useEffect(() => {
         if (initialData) {
             setForm({
@@ -24,6 +30,25 @@ export default function EditStaffModal({ initialData, onClose, onSave, onDelete 
             });
         }
     }, [initialData]);
+
+    useEffect(() => {
+        if (!initialData) return;
+
+        fetch('http://localhost:3001/animals')
+            .then(res => res.json())
+            .then(animalList => {
+                fetch(`http://localhost:3001/staff/${initialData.staffSsn}/details`)
+                    .then(res => res.json())
+                    .then(details => {
+                        const caredIds = (details.caredAnimals || []).map(a => a.animalId);
+                        setAvailableAnimals(animalList); // optional: could also filter here
+                        setAssignedAnimals(details.caredAnimals || []); // <-- add this
+                    })
+                    .catch(err => console.error('Error fetching staff details:', err));
+            })
+            .catch(err => console.error('Error fetching animals:', err));
+    }, [initialData]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -38,6 +63,70 @@ export default function EditStaffModal({ initialData, onClose, onSave, onDelete 
         }
         onSave(form);
     };
+
+    const handleAssignAnimal = async () => {
+        if (!selectedAnimalId) return;
+
+        try {
+            const response = await fetch(`http://localhost:3001/staff/${form.staffSsn}/assign-animal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ animalId: selectedAnimalId }),
+            });
+
+            if (response.status === 409) {
+                const errMsg = await response.json();
+                alert(errMsg.error || 'This animal is already assigned.');
+                return;
+            }
+
+            if (!response.ok) throw new Error('Failed to assign animal');
+
+            alert('Animal assigned successfully!');
+            setSelectedAnimalId('');
+            refreshAnimals();
+
+        } catch (err) {
+            console.error('Error assigning animal:', err);
+            alert('Something went wrong while assigning.');
+        }
+    };
+
+    const handleUnassignAnimal = async (animalId) => {
+        if (!window.confirm('Remove this animal from their care list?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:3001/staff/${form.staffSsn}/unassign-animal`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ animalId }),
+            });
+
+            if (!response.ok) throw new Error('Failed to unassign');
+
+            setAssignedAnimals(prev => prev.filter(a => a.animalId !== animalId));
+        } catch (err) {
+            console.error('Error unassigning animal:', err);
+            alert('Could not remove animal.');
+        }
+    };
+
+    const refreshAnimals = () => {
+        fetch('http://localhost:3001/animals')
+            .then(res => res.json())
+            .then(animalList => {
+                fetch(`http://localhost:3001/staff/${form.staffSsn}/details`)
+                    .then(res => res.json())
+                    .then(details => {
+                        const caredIds = (details.caredAnimals || []).map(a => a.animalId);
+                        setAvailableAnimals(animalList); // optionally filter out assigned if needed
+                        setAssignedAnimals(details.caredAnimals || []);
+                    })
+                    .catch(err => console.error('Error fetching staff details:', err));
+            })
+            .catch(err => console.error('Error fetching animals:', err));
+    };
+
 
     return (
         <div className="modal-overlay">
@@ -59,6 +148,43 @@ export default function EditStaffModal({ initialData, onClose, onSave, onDelete 
                         </select>
                     </label>
                     <label>Supervisor SSN: <input name="supervisorSsn" value={form.supervisorSsn} onChange={handleChange} /></label>
+                    <label>Add Animal:</label>
+                    <select
+                        value={selectedAnimalId}
+                        onChange={(e) => setSelectedAnimalId(e.target.value)}
+                    >
+                        <option value="">-- Select an animal --</option>
+                        {availableAnimals.map(animal => (
+                            <option key={animal.animalId} value={animal.animalId}>
+                                {animal.animalName} – {animal.animalSpecies}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="button" onClick={handleAssignAnimal}>Assign Animal</button>
+                    <h4>Currently Assigned Animals:</h4>
+                    <ul>
+                        {assignedAnimals.map(animal => (
+                            <li key={animal.animalId}>
+                                {animal.animalName} – {animal.animalSpecies}
+                                <button
+                                    type="button"
+                                    onClick={() => handleUnassignAnimal(animal.animalId)}
+                                    className="circle-x"
+                                    style={{
+                                        marginLeft: '8px',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        color: 'red',
+                                        cursor: 'pointer',
+                                        fontSize: '1.2rem'
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+
 
                     <button type="submit">Update</button>
                     <button
