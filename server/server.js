@@ -691,6 +691,33 @@ app.put('/vet_visits', async (req, res) => {
     }
 });
 
+app.patch('/animals/:id/gender-spay', async (req, res) => {
+    const animalId = req.params.id;
+    const { animalGender, isSpayedOrNeutered } = req.body;
+
+    if (!animalGender || !isSpayedOrNeutered) {
+        return res.status(400).json({ error: 'Both gender and spay status are required.' });
+    }
+
+    try {
+        await db.promise().query(
+            `UPDATE animal
+             SET animalGender = ?, isSpayedOrNeutered = ?
+             WHERE animalId = ?`,
+            [animalGender, isSpayedOrNeutered, animalId]
+        );
+
+        const [updatedRows] = await db.promise().query(
+            'SELECT * FROM animal WHERE animalId = ?',
+            [animalId]
+        );
+
+        res.json(updatedRows[0]);
+    } catch (error) {
+        console.error('Error updating gender/spay:', error);
+        res.status(500).json({ error: 'Failed to update gender/spay' });
+    }
+});
 
 // LISTEN
 app.listen(3001, () => {

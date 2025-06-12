@@ -9,10 +9,19 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
     const [vaxEditData, setVaxEditData] = useState({});
     const [editingApptIndex, setEditingApptIndex] = useState(null);
     const [apptEditData, setApptEditData] = useState({});
+    const [editingBasics, setEditingBasics] = useState(false);
+    const [genderValue, setGenderValue] = useState(entry.animal.animalGender || '');
+    const [spayValue, setSpayValue] = useState(entry.animal.isSpayedOrNeutered || '');
 
     useEffect(() => {
         setEntry(initialEntry);
     }, [initialEntry]);
+
+    useEffect(() => {
+        setGenderValue(entry.animal.animalGender || '');
+        setSpayValue(entry.animal.isSpayedOrNeutered || '');
+    }, [entry]);
+
 
 
     if (!entry) return null;
@@ -25,6 +34,8 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
         vetName,
         vetPhone,
         vetAddress,
+        animalGender,
+        isSpayedOrNeutered
     } = entry.animal;
 
     const { caretakerName } = entry.animal;
@@ -148,6 +159,30 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
         }
     };
 
+    const saveBasicInfoEdit = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/animals/${entry.animal.animalId}/gender-spay`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    animalGender: genderValue,
+                    isSpayedOrNeutered: spayValue
+                })
+            });
+
+            if (!response.ok) throw new Error('Update failed');
+
+            const refreshed = await fetch(`http://localhost:3001/animals/${entry.animal.animalId}/details`);
+            const updatedEntry = await refreshed.json();
+
+            setEntry(updatedEntry);
+            setEditingBasics(false);
+        } catch (err) {
+            console.error('Error updating gender/spay:', err);
+            alert('Failed to update.');
+        }
+    };
+
 
 
 
@@ -170,6 +205,34 @@ export default function MedicalHistoryModal({ entry: initialEntry, onClose, onRe
                             <h4>Basic Info</h4>
                             <p><strong>Species:</strong> {animalSpecies}</p>
                             <p><strong>Age:</strong> {calculateAge(animalBdate)}</p>
+                            <p><strong>Gender:</strong> {animalGender}</p>
+                            {!editingBasics ? (
+                                <>
+                                    <div className="inline-edit-row">
+                                        <strong>Spayed/Neutered:</strong>
+                                        <span>{isSpayedOrNeutered === 'yes' ? 'Yes' : 'No'}</span>
+                                        <button onClick={() => setEditingBasics(true)}>Edit</button>
+                                    </div>
+
+                                </>
+                            ) : (
+                                <>
+                                    <p>
+                                        <strong>Spayed/Neutered:</strong>{' '}
+                                        <select value={spayValue} onChange={(e) => setSpayValue(e.target.value)}>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </p>
+                                    <button onClick={saveBasicInfoEdit}>Save</button>
+                                    <button onClick={() => {
+                                        setEditingBasics(false);
+                                        setGenderValue(animalGender);
+                                        setSpayValue(isSpayedOrNeutered);
+                                    }}>Cancel</button>
+                                </>
+                            )}
+
                             <p><strong>Adoption Status:</strong> {adoptionStatus}</p>
                             <p><strong>Caretaker:</strong> {caretakerName || 'Unassigned'}</p>
                         </section>
