@@ -1,6 +1,6 @@
 // src/components/SearchTab.js
 import React, { useState } from 'react';
-import './SearchTab.css'; // Optional CSS styling
+import './SearchTab.css';
 
 export default function SearchTab() {
     const [filters, setFilters] = useState({

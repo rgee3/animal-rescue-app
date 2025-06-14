@@ -1,4 +1,7 @@
-// src/components/MainDashboard.js
+// MainDashboard.js
+// This is the centralized home page for Animal Rescue web application.
+// It manages the main view state (animals, staff, vets, adoptions, medical history, supplies, and an advanced search.
+// It fetches data for the animals and staff, and
 import React, {useState, useEffect} from 'react';
 import AnimalList from './AnimalList';
 import StaffList from './StaffList';
@@ -216,6 +219,7 @@ export default function MainDashboard() {
 
             {view === 'animals' && (
                 <>
+                    <h2>Animals</h2>
                     <button onClick={() => setShowAddModal(true)}>➕ Add Animal</button>
                     <AnimalList
                         animals={animals}
@@ -239,6 +243,7 @@ export default function MainDashboard() {
 
             {view === 'staff' && (
                 <>
+                    <h2>Staff</h2>
                     <button onClick={() => setShowAddStaffModal(true)}>➕ Add Staff</button>
                     <StaffList
                         staff={staff}
@@ -263,6 +268,7 @@ export default function MainDashboard() {
             {view === 'vets' && (
 
                 <>
+                    <h2>Vets</h2>
                     <button onClick={() => setShowAddVetModal(true)}>➕ Add Vet</button>
                     <VetList
                         vets={vets}
@@ -323,7 +329,6 @@ export default function MainDashboard() {
                     )}
                 </div>
             )}
-
 
 
             {selectedVet && vetDetails && (
@@ -582,6 +587,7 @@ export default function MainDashboard() {
 
             {view === 'medical' && (
                 <>
+                    <h2>Medical History Overview</h2>
                     <button onClick={() => setShowAddMedicalModal(true)}>➕ Add Medical Record</button>
                     <MedicalHistoryList
                         medicalHistory={medicalHistory}

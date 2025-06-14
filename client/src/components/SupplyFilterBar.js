@@ -25,6 +25,7 @@ export default function SupplyFilterBar({ filter, setFilter }) {
                     <option value="Other">Other</option>
                 </select>
             </label>
+
             <label>
                 Search by Supply Name:
                 <input
@@ -35,6 +36,7 @@ export default function SupplyFilterBar({ filter, setFilter }) {
                     placeholder="e.g. leash"
                 />
             </label>
+
             <label>
                 Search by Animal:
                 <input
@@ -46,6 +48,27 @@ export default function SupplyFilterBar({ filter, setFilter }) {
                 />
             </label>
 
+            <label>
+                Search by Supplier Name:
+                <input
+                    type="text"
+                    name="supplierName"
+                    value={filter.supplierName}
+                    onChange={handleChange}
+                    placeholder="e.g. PetSupplies Inc."
+                />
+            </label>
+
+            <label>
+                Search by Supplier ID:
+                <input
+                    type="text"
+                    name="supplierId"
+                    value={filter.supplierId}
+                    onChange={handleChange}
+                    placeholder="e.g. 201"
+                />
+            </label>
         </div>
     );
 }

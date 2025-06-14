@@ -224,7 +224,6 @@ app.get('/staff', async (req, res) => {
             LEFT JOIN animal a ON cf.Al_animalId = a.animalId
         `);
 
-        // Map animals to each staff member
         const staffWithAnimals = staffRows.map(staff => {
             const caredAnimals = assignments
                 .filter(row => row.staffSsn === staff.staffSsn && row.animalId)
@@ -954,25 +953,42 @@ app.post('/search', async (req, res) => {
 app.get('/supplies', (req, res) => {
     const query = `
         SELECT
+            s.supplyId,
             s.supplyName,
             s.supplyType,
-            SUM(s.inventoryAmount) AS totalInventory,
+            s.inventoryAmount AS totalInventory,
+
             (
                 SELECT COUNT(DISTINCT an.Al_animalId)
                 FROM ANIMAL_NEEDS an
-                         JOIN SUPPLIES sx ON sx.supplyId = an.Sy_supplyId
-                WHERE sx.supplyName = s.supplyName AND sx.supplyType = s.supplyType
+                WHERE an.Sy_supplyId = s.supplyId
             ) AS neededBy,
+
             (
                 SELECT GROUP_CONCAT(DISTINCT a.animalName SEPARATOR ', ')
                 FROM ANIMAL a
                          JOIN ANIMAL_NEEDS an ON a.animalId = an.Al_animalId
-                         JOIN SUPPLIES sx ON sx.supplyId = an.Sy_supplyId
-                WHERE sx.supplyName = s.supplyName AND sx.supplyType = s.supplyType
-            ) AS animalNames
+                WHERE an.Sy_supplyId = s.supplyId
+            ) AS animalNames,
+
+            (
+                SELECT GROUP_CONCAT(DISTINCT sp.supplierName SEPARATOR ', ')
+                FROM SUPPLIED_BY sb
+                         JOIN SUPPLIER sp ON sb.Sr_supplierId = sp.supplierId
+                WHERE sb.Sy_supplyId = s.supplyId
+            ) AS supplierNames,
+
+            (
+                SELECT GROUP_CONCAT(DISTINCT sb.Sr_supplierId SEPARATOR ', ')
+                FROM SUPPLIED_BY sb
+                WHERE sb.Sy_supplyId = s.supplyId
+            ) AS supplierIds
+
         FROM SUPPLIES s
-        GROUP BY s.supplyName, s.supplyType
         ORDER BY s.supplyType, s.supplyName;
+
+
+
     `;
 
     db.query(query, (err, results) => {
@@ -984,6 +1000,61 @@ app.get('/supplies', (req, res) => {
     });
 });
 
+app.post('/supplies', (req, res) => {
+    const { supplyName, supplyType, inventoryAmount, animalIds = [], supplierIds = [] } = req.body;
+
+    if (!supplyName || !supplyType || inventoryAmount === undefined) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const insertSupplyQuery = `
+        INSERT INTO SUPPLIES (supplyName, supplyType, inventoryAmount)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(insertSupplyQuery, [supplyName, supplyType, inventoryAmount], (err, result) => {
+        if (err) {
+            console.error('Error inserting into SUPPLIES:', err);
+            return res.status(500).json({ error: 'Failed to add supply' });
+        }
+
+        const newSupplyId = result.insertId;
+        const inserts = [];
+
+        if (animalIds.length > 0) {
+            const animalData = animalIds.map(id => [id, newSupplyId]);
+            inserts.push(
+                new Promise((resolve, reject) => {
+                    db.query('INSERT INTO ANIMAL_NEEDS (Al_animalId, Sy_supplyId) VALUES ?', [animalData], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                })
+            );
+        }
+
+        if (supplierIds.length > 0) {
+            const supplierData = supplierIds.map(id => [newSupplyId, id]);
+            inserts.push(
+                new Promise((resolve, reject) => {
+                    db.query('INSERT INTO SUPPLIED_BY (Sy_supplyId, Sr_supplierId) VALUES ?', [supplierData], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                })
+            );
+        }
+
+        Promise.all(inserts)
+            .then(() => {
+                res.status(201).json({ supplyId: newSupplyId, message: 'Supply added successfully' });
+            })
+            .catch(err => {
+                console.error('Error linking supply:', err);
+                res.status(500).json({ error: 'Failed to link supply to animals or suppliers' });
+            });
+    });
+});
 
 
 // LISTEN

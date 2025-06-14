@@ -14,7 +14,7 @@ export default function MedicalFilterBar({ filter, setFilter }) {
     return (
         <form
             className="filter-bar"
-            onSubmit={(e) => e.preventDefault()} // prevents Enter from reloading the page
+            onSubmit={(e) => e.preventDefault()}
         >
             <label>
                 Animal Name:

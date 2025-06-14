@@ -52,7 +52,6 @@ export default function MedicalHistoryList({ medicalHistory, onMoreInfo }) {
 
     return (
         <div>
-            <h2>Medical History Overview</h2>
             <MedicalFilterBar filter={filter} setFilter={setFilter} />
             {filteredHistory.length === 0 ? (
                 <p style={{ textAlign: 'center', marginTop: '1rem' }}>No medical history available.</p>

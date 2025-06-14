@@ -2,11 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import SupplyFilterBar from './SupplyFilterBar';
 import './SuppliesList.css';
+import AddSupplyModal from './AddSupplyModal';
 
 export default function SuppliesList() {
     const [supplies, setSupplies] = useState([]);
     const [expandedRows, setExpandedRows] = useState({});
-    const [filter, setFilter] = useState({ type: '', name: '', animal: '' });
+    const [filter, setFilter] = useState({
+        type: '',
+        name: '',
+        animal: '',
+        supplierId: '',
+        supplierName: '',
+    });
+    const [showAddModal, setShowAddModal] = useState(false);
+
 
 
     useEffect(() => {
@@ -30,8 +39,22 @@ export default function SuppliesList() {
             !filter.animal ||
             (item.animalNames &&
                 item.animalNames.toLowerCase().includes(filter.animal.toLowerCase()));
+        const matchesSupplierId =
+            !filter.supplierId ||
+            (item.supplierIds && item.supplierIds.includes(filter.supplierId));
 
-        return matchesType && matchesName && matchesAnimal;
+        const matchesSupplierName =
+            !filter.supplierName ||
+            (item.supplierNames &&
+                item.supplierNames.toLowerCase().includes(filter.supplierName.toLowerCase()));
+
+
+        return (matchesType &&
+            matchesName &&
+            matchesAnimal &&
+            matchesSupplierId &&
+            matchesSupplierName
+        );
     });
 
     const groupedSupplies = filtered.reduce((acc, item) => {
@@ -46,6 +69,8 @@ export default function SuppliesList() {
         <div className="supplies-container">
             <h2>Supplies Inventory</h2>
 
+            <button onClick={() => setShowAddModal(true)}>+ Add Supply</button>
+
             <SupplyFilterBar filter={filter} setFilter={setFilter} />
 
             {Object.entries(groupedSupplies).map(([type, items]) => (
@@ -54,28 +79,34 @@ export default function SuppliesList() {
                     <table className="supply-table">
                         <thead>
                         <tr>
-                            <th>Supply Name</th>
+                            <th className="supply-name-cell">Supply Name</th>
+                            <th>Supplier ID(s)</th>
+                            <th>Supplied By</th>
                             <th>In Stock</th>
                             <th>Needed By (# of Animals)</th>
                             <th>Details</th>
                         </tr>
                         </thead>
+
                         <tbody>
                         {items.map((item) => (
                             <React.Fragment key={item.supplyId}>
                                 <tr>
-                                    <td>{item.supplyName}</td>
+                                    <td className="supply-name-cell">{item.supplyName}</td>
+                                    <td>{item.supplierIds || '—'}</td>
+                                    <td>{item.supplierNames || '—'}</td>
                                     <td>{item.totalInventory}</td>
                                     <td>{item.neededBy}</td>
                                     <td>
-                                        <button onClick={() => toggleRow(`${item.supplyName}-${item.supplyType}`)}>
-                                        {expandedRows[item.supplyId] ? 'Hide' : 'Show'} Animals
+                                        <button onClick={() => toggleRow(item.supplyId)}>
+                                            {expandedRows[item.supplyId] ? 'Hide' : 'Show'} Animals
                                         </button>
                                     </td>
                                 </tr>
-                                {expandedRows[`${item.supplyName}-${item.supplyType}`] && (
+
+                                {expandedRows[item.supplyId] && (
                                     <tr className="animal-row">
-                                        <td colSpan="4">
+                                        <td colSpan="6">
                                             <strong>Used by:</strong>
                                             {item.animalNames ? (
                                                 <ul className="animal-name-list">
@@ -86,17 +117,29 @@ export default function SuppliesList() {
                                             ) : (
                                                 <em>No animals currently need this.</em>
                                             )}
-
                                         </td>
                                     </tr>
                                 )}
-
                             </React.Fragment>
                         ))}
                         </tbody>
                     </table>
                 </div>
             ))}
+
+            {showAddModal && (
+                <AddSupplyModal
+                    onClose={() => setShowAddModal(false)}
+                    onSave={(newSupply) => {
+                        fetch('http://localhost:3001/supplies')
+                            .then((res) => res.json())
+                            .then((data) => setSupplies(data))
+                            .catch((err) => console.error('Error fetching supplies:', err));
+                    }}
+                />
+            )}
         </div>
     );
+
+
 }
