@@ -215,13 +215,33 @@ app.delete('/animals/:id', async (req, res) => {
 
 app.get('/staff', async (req, res) => {
     try {
-        const [rows] = await db.promise().query('SELECT * FROM staff');
-        res.json(rows);
+        const [staffRows] = await db.promise().query('SELECT * FROM staff');
+
+        const [assignments] = await db.promise().query(`
+            SELECT s.staffSsn, a.animalId, a.animalName
+            FROM staff s
+            LEFT JOIN cares_for cf ON s.staffSsn = cf.St_staffSsn
+            LEFT JOIN animal a ON cf.Al_animalId = a.animalId
+        `);
+
+        // Map animals to each staff member
+        const staffWithAnimals = staffRows.map(staff => {
+            const caredAnimals = assignments
+                .filter(row => row.staffSsn === staff.staffSsn && row.animalId)
+                .map(row => ({
+                    animalId: row.animalId,
+                    animalName: row.animalName
+                }));
+            return { ...staff, caredAnimals };
+        });
+
+        res.json(staffWithAnimals);
     } catch (error) {
         console.error('Error fetching staff:', error);
         res.status(500).send('Database error retrieving staff');
     }
 });
+
 
 app.get('/staff/:ssn/details', async (req, res) => {
     const staffSsn = req.params.ssn;
@@ -381,13 +401,32 @@ app.delete('/staff/:ssn/unassign-animal', async (req, res) => {
 
 app.get('/vets', async (req, res) => {
     try {
-        const [rows] = await db.promise().query('SELECT * FROM vet');
-        res.json(rows);
+        const [vets] = await db.promise().query('SELECT * FROM vet');
+
+        const [seen] = await db.promise().query(`
+            SELECT v.vetSsn, a.animalId, a.animalName
+            FROM vet_visits vv
+            JOIN animal a ON vv.Al_animalId = a.animalId
+            JOIN vet v ON vv.V_vetSsn = v.vetSsn
+        `);
+
+        const fullVets = vets.map(vet => {
+            const animalsSeen = seen
+                .filter(r => r.vetSsn === vet.vetSsn)
+                .map(r => ({
+                    animalId: r.animalId,
+                    animalName: r.animalName
+                }));
+            return { ...vet, animalsSeen };
+        });
+
+        res.json(fullVets);
     } catch (error) {
         console.error('Error fetching vets:', error);
         res.status(500).send('Database error retrieving vets');
     }
 });
+
 
 app.get('/vets/:ssn/details', async (req, res) => {
     const vetSsn = req.params.ssn;

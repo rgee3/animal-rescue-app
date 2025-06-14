@@ -1,5 +1,5 @@
 // src/components/MainDashboard.js
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import AnimalList from './AnimalList';
 import StaffList from './StaffList';
 import AnimalDetailModal from './AnimalDetailModal';
@@ -80,7 +80,7 @@ export default function MainDashboard() {
     const handleAddAdoption = (data) => {
         fetch('http://localhost:3001/adoptions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then(() => {
             setShowAddAdoptionModal(false);
@@ -91,7 +91,7 @@ export default function MainDashboard() {
     const handleEditAdoption = (data) => {
         fetch('http://localhost:3001/adoptions', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then((res) => {
             if (res.ok) {
@@ -106,7 +106,7 @@ export default function MainDashboard() {
     const handleDeleteAdoption = (data) => {
         fetch('http://localhost:3001/adoptions', {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then(() => {
             setShowEditAdoptionModal(false);
@@ -124,7 +124,7 @@ export default function MainDashboard() {
 
 
     useEffect(() => {
-        fetch('http://localhost:3001/animals')
+        fetch('http://localhost:3001/medical-history')
             .then((res) => res.json())
             .then((data) => setAnimals(data))
             .catch((err) => console.error('Error loading animals:', err));
@@ -169,7 +169,7 @@ export default function MainDashboard() {
             if (form.recordType === 'vaccination') {
                 await fetch('http://localhost:3001/vaccinations', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         animalId: form.animalId,
                         vaccineName: form.vaccineName,
@@ -180,7 +180,7 @@ export default function MainDashboard() {
             } else if (form.recordType === 'appointment') {
                 await fetch('http://localhost:3001/vet_visits', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         animalId: form.animalId,
                         vetSsn: form.vetSsn,
@@ -209,7 +209,7 @@ export default function MainDashboard() {
                 <button onClick={() => handleSetView('adoptions')}>Adoptions</button>
                 <button onClick={() => handleSetView('medical')}>Medical History</button>
                 <button onClick={() => handleSetView('supplies')}>Supplies</button>
-                <button onClick={() => handleSetView('search')}>Search</button>
+                <button onClick={() => handleSetView('search')}>Advanced Search</button>
 
 
             </div>
@@ -254,7 +254,8 @@ export default function MainDashboard() {
                         }}
                         onEdit={(member) => {
                             setEditStaff(member);
-                            setIsStaffEditOpen(true);                        }}
+                            setIsStaffEditOpen(true);
+                        }}
                     />
                 </>
             )}
@@ -287,24 +288,18 @@ export default function MainDashboard() {
                 <div className="tab-content">
                     <h2>Adoptions</h2>
                     <button onClick={() => setShowAddAdoptionModal(true)}>+ Add Adoption</button>
-                    <div className="card-list">
-                        {adoptions.map((adoption) => (
-                            <AdoptionCard
-                                key={`${adoption.Al_animalId}-${adoption.Ar_adopterSsn}`}
-                                adoption={adoption}
-                                onEdit={() => {
-                                    setSelectedAdoption(adoption);
-                                    setShowEditAdoptionModal(true);
-                                }}
-                                onMoreInfo={() => {
-                                    setSelectedAdoption(adoption);
-                                    setShowAdoptionDetailModal(true);
-                                }}
-                            />
-                        ))}
-                    </div>
 
-
+                    <AdoptionList
+                        adoptions={adoptions}
+                        onEdit={(adoption) => {
+                            setSelectedAdoption(adoption);
+                            setShowEditAdoptionModal(true);
+                        }}
+                        onMoreInfo={(adoption) => {
+                            setSelectedAdoption(adoption);
+                            setShowAdoptionDetailModal(true);
+                        }}
+                    />
 
                     {showAddAdoptionModal && (
                         <AddAdoptionModal
@@ -328,6 +323,7 @@ export default function MainDashboard() {
                     )}
                 </div>
             )}
+
 
 
             {selectedVet && vetDetails && (
@@ -366,7 +362,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch('http://localhost:3001/animals', {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(formData),
                             });
 
@@ -389,7 +385,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch(`http://localhost:3001/animals/${editAnimal.animalId}`, {
                                 method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(updatedData),
                             });
 
@@ -451,7 +447,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch('http://localhost:3001/staff', {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(formData)
                             });
 
@@ -478,7 +474,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch(`http://localhost:3001/staff/${updated.staffSsn}`, {
                                 method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(updated),
                             });
 
@@ -523,7 +519,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch('http://localhost:3001/vets', {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(formData),
                             });
 
@@ -546,7 +542,7 @@ export default function MainDashboard() {
                         try {
                             const response = await fetch(`http://localhost:3001/vets/${updated.vetSsn}`, {
                                 method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(updated),
                             });
 
@@ -617,7 +613,6 @@ export default function MainDashboard() {
             )}
 
 
-
             {showAddMedicalModal && (
                 <AddMedicalRecordModal
                     onClose={() => setShowAddMedicalModal(false)}
@@ -630,10 +625,9 @@ export default function MainDashboard() {
                 />
             )}
 
-            {view === 'supplies' && <SuppliesList />}
+            {view === 'supplies' && <SuppliesList/>}
 
-            {view === 'search' && <SearchTab />}
-
+            {view === 'search' && <SearchTab/>}
 
 
         </div>

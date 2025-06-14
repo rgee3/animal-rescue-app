@@ -26,7 +26,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                             <p><strong>Species:</strong> {animal.animalSpecies}</p>
                             <p><strong>Breed:</strong> {animal.animalBreed}</p>
                             <p><strong>Birthdate:</strong> {animal.animalBdate?.split('T')[0]}</p>
-                            <p><strong>Status:</strong> {animal.adoptionStatus}</p>
+                            <p><strong>Adoption Status:</strong> {animal.adoptionStatus}</p>
                             <p><strong>Arrival Date:</strong> {animal.arrivalDate?.split('T')[0]}</p>
                             <p><strong>Caretakers:</strong> {caretakers.length > 0 ? caretakers.join(', ') : 'Unassigned'}</p>
                         </div>
@@ -56,8 +56,7 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                                             <strong>Vet:</strong> {visit.vetName}<br />
                                             <strong>Phone:</strong> {visit.vetPhone}<br />
                                             <strong>Diagnosis:</strong> {visit.animalDiagnosis}<br />
-                                            <strong>Next Checkup:</strong> {new Date(visit.lastCheckup).toLocaleDateString()}
-
+                                            <strong>Last Visit:</strong> {new Date(visit.visitDate).toLocaleDateString()}
                                         </li>
                                     ))}
                                 </ul>

@@ -19,7 +19,7 @@ export default function AnimalCard({ animal, onMoreInfo, onEdit }) {
             <p><strong>Gender:</strong> {animal.animalGender}</p>
             <p><strong>Age:</strong> {calculateAge(animal.animalBdate)} years</p>
             <p><strong>Spayed/Neutered:</strong> {animal.isSpayedOrNeutered === 'yes' ? 'Yes' : 'No'}</p>
-            <p className={`status ${animal.adoptionStatus}`}><strong>Status:</strong> {animal.adoptionStatus}</p>
+            <p className={`status ${animal.adoptionStatus}`}><strong>Adoption Status:</strong> {animal.adoptionStatus}</p>
             <button onClick={() => onMoreInfo(animal)}>More Info</button>
             <button onClick={() => onEdit(animal)}>Edit</button>
         </div>

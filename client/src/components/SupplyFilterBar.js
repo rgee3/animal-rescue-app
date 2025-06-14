@@ -1,6 +1,6 @@
 // src/components/SupplyFilterBar.js
 import React from 'react';
-import './SupplyFilterBar.css';
+import './FilterBar.css';
 
 export default function SupplyFilterBar({ filter, setFilter }) {
     const handleChange = (e) => {
@@ -12,7 +12,7 @@ export default function SupplyFilterBar({ filter, setFilter }) {
     };
 
     return (
-        <div className="supply-filter-bar">
+        <div className="filter-bar">
             <label>
                 Supply Type:
                 <select name="type" value={filter.type} onChange={handleChange}>
