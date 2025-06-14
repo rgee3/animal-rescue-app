@@ -69,9 +69,9 @@ export default function AnimalDetailModal({ animal, details, onClose, onEditRequ
                     {activeTab === 'adoption' && (
                         <div>
                             <h3>Adoption History</h3>
-                            {details.adoptions.length > 0 ? (
+                            {details.adoptionHistory.length > 0 ? (
                                 <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                {details.adoptions.map((adopt, index) => (
+                                {details.adoptionHistory.map((adopt, index) => (
                                         <li key={index}>
                                             <strong>Date:</strong> {new Date(adopt.adoptionDate).toLocaleDateString()}<br />
                                             <strong>Name:</strong> {adopt.adopterName}<br />

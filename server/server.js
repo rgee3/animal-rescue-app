@@ -56,12 +56,12 @@ app.get('/animals/:id/details', async (req, res) => {
         );
 
         const [vetVisits] = await db.promise().query(
-            `SELECT vv.visitDate, vv.lastCheckup, vv.animalDiagnosis, v.vetName, v.vetPhone, v.vetSchedule, v.vetAddress
+            `SELECT vv.visitDate, vv.animalDiagnosis, v.vetName, v.vetPhone, v.vetSchedule, v.vetAddress
              FROM vet_visits vv
                       JOIN vet v ON vv.V_vetSsn = v.vetSsn
              WHERE vv.Al_animalId = ?
             ORDER BY vv.visitDate DESC`, [animalId]
-            
+
         );
 
         const latestVisit = vetVisits[0] || {};
@@ -94,7 +94,7 @@ app.get('/animals/:id/details', async (req, res) => {
             vetName: latestVisit.vetName || null,
             vetPhone: latestVisit.vetPhone || null,
             vetAddress: latestVisit.vetAddress || null,
-            adoptions: adoptionHistory
+            adoptionHistory
         });
     } catch (error) {
         console.error('Error fetching animal details:', error);
@@ -631,7 +631,7 @@ app.get('/medical-history', async (req, res) => {
                 MAX(v.vetName) AS vetName,
                 MAX(v.vetPhone) AS vetPhone,
                 MAX(vv.animalDiagnosis) AS animalDiagnosis,
-                MAX(vv.visitDate) AS nextVisitDate,
+                latest_vv.latestVisit AS lastVisitDate,
                 GROUP_CONCAT(DISTINCT s.staffName SEPARATOR ', ') AS caretakers
             FROM animal a
                      LEFT JOIN (
@@ -644,7 +644,7 @@ app.get('/medical-history', async (req, res) => {
                      LEFT JOIN cares_for cf ON a.animalId = cf.Al_animalId
                      LEFT JOIN staff s ON cf.St_staffSsn = s.staffSsn
             GROUP BY a.animalId
-            ORDER BY nextVisitDate DESC
+            ORDER BY lastVisitDate DESC
 
 
         `);

@@ -10,7 +10,7 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
         isSpayedOrNeutered,
         animalBdate,
         adoptionStatus,
-        nextVisitDate,
+        lastVisitDate,
         animalDiagnosis,
         vetName,
         vetPhone,
@@ -33,7 +33,7 @@ export default function MedicalHistoryCard({ entry, onMoreInfo }) {
             <p><strong>Spayed/Neutered:</strong> {isSpayedOrNeutered === 'yes' ? 'Yes' : 'No'}</p>
             <p><strong>Adoption Status:</strong> {adoptionStatus}</p>
             <p><strong>Health:</strong> {animalDiagnosis || 'No current diagnosis'}</p>
-            <p><strong>Next Visit:</strong> {nextVisitDate ? nextVisitDate.split('T')[0] : 'None scheduled'}</p>
+            <p><strong>Latest Visit:</strong> {lastVisitDate ? lastVisitDate.split('T')[0] : 'None scheduled'}</p>
             <p><strong>Vet:</strong> {vetName || 'N/A'} ({vetPhone || 'No phone'})</p>
             <p><strong>Caretakers:</strong> {entry.caretakers || 'Unassigned'}</p>
             <button onClick={onMoreInfo}>More Info</button>
