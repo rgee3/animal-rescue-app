@@ -1,0 +1,19 @@
+/* src/components/SupplyFilterBar.css */
+.supply-filter-bar {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.supply-filter-bar label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.supply-filter-bar input,
+.supply-filter-bar select {
+    padding: 5px;
+    font-size: 14px;
+}

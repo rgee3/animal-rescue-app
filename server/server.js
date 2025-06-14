@@ -912,6 +912,39 @@ app.post('/search', async (req, res) => {
 
 });
 
+app.get('/supplies', (req, res) => {
+    const query = `
+        SELECT
+            s.supplyName,
+            s.supplyType,
+            SUM(s.inventoryAmount) AS totalInventory,
+            (
+                SELECT COUNT(DISTINCT an.Al_animalId)
+                FROM ANIMAL_NEEDS an
+                         JOIN SUPPLIES sx ON sx.supplyId = an.Sy_supplyId
+                WHERE sx.supplyName = s.supplyName AND sx.supplyType = s.supplyType
+            ) AS neededBy,
+            (
+                SELECT GROUP_CONCAT(DISTINCT a.animalName SEPARATOR ', ')
+                FROM ANIMAL a
+                         JOIN ANIMAL_NEEDS an ON a.animalId = an.Al_animalId
+                         JOIN SUPPLIES sx ON sx.supplyId = an.Sy_supplyId
+                WHERE sx.supplyName = s.supplyName AND sx.supplyType = s.supplyType
+            ) AS animalNames
+        FROM SUPPLIES s
+        GROUP BY s.supplyName, s.supplyType
+        ORDER BY s.supplyType, s.supplyName;
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching supplies:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+});
+
 
 
 // LISTEN

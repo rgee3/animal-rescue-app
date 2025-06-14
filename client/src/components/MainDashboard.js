@@ -21,6 +21,7 @@ import MedicalHistoryList from './MedicalHistoryList';
 import MedicalHistoryModal from './MedicalHistoryModal';
 import AddMedicalRecordModal from './AddMedicalRecordModal';
 import SearchTab from "./SearchTab";
+import SuppliesList from './SuppliesList';
 
 export default function MainDashboard() {
     const [view, setView] = useState(() => {
@@ -207,6 +208,7 @@ export default function MainDashboard() {
                 <button onClick={() => handleSetView('vets')}>Vets</button>
                 <button onClick={() => handleSetView('adoptions')}>Adoptions</button>
                 <button onClick={() => handleSetView('medical')}>Medical History</button>
+                <button onClick={() => handleSetView('supplies')}>Supplies</button>
                 <button onClick={() => handleSetView('search')}>Search</button>
 
 
@@ -627,6 +629,8 @@ export default function MainDashboard() {
                     }}
                 />
             )}
+
+            {view === 'supplies' && <SuppliesList />}
 
             {view === 'search' && <SearchTab />}
 

@@ -1,0 +1,41 @@
+/* src/components/SuppliesList.css */
+.supplies-container {
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.supply-section {
+    margin-bottom: 30px;
+}
+
+.supply-section h3 {
+    margin-top: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+    color: #333;
+}
+
+.supply-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.supply-table th,
+.supply-table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.supply-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.animal-row td {
+    text-align: left;
+    background-color: #fcfcfc;
+    font-style: italic;
+    padding-top: 8px;
+}
+
