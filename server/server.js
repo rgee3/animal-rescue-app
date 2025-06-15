@@ -1,3 +1,8 @@
+// index.js
+// This is the main backend file for the Animal Rescue Dashboard.
+// It connects to the MySQL database and handles all the routes for managing
+// animals, staff, vets, adoptions, medical history, and supplies.
+
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -44,7 +49,8 @@ app.get('/animals/:id/details', async (req, res) => {
 
     try {
         const [animalRows] = await db.promise().query(
-            'SELECT * FROM animal WHERE animalId = ?', [animalId]
+            'SELECT * FROM animal ' +
+            'WHERE animalId = ?', [animalId]
         );
 
         if (animalRows.length === 0) {
@@ -52,7 +58,8 @@ app.get('/animals/:id/details', async (req, res) => {
         }
 
         const [vaccinations] = await db.promise().query(
-            'SELECT * FROM vaccinations WHERE Al_animalId = ?', [animalId]
+            'SELECT * FROM vaccinations ' +
+            'WHERE Al_animalId = ?', [animalId]
         );
 
         const [vetVisits] = await db.promise().query(
@@ -134,7 +141,8 @@ app.post('/animals', async (req, res) => {
         const newAnimalId = result.insertId;
 
         const [newAnimalRows] = await db.promise().query(
-            'SELECT * FROM animal WHERE animalId = ?',
+            'SELECT * FROM animal ' +
+            'WHERE animalId = ?',
             [newAnimalId]
         );
 
@@ -178,7 +186,8 @@ app.put('/animals/:id', async (req, res) => {
         );
 
         const [updatedRows] = await db.promise().query(
-            'SELECT * FROM animal WHERE animalId = ?',
+            'SELECT * FROM animal ' +
+            'WHERE animalId = ?',
             [animalId]
         );
 
@@ -247,7 +256,8 @@ app.get('/staff/:ssn/details', async (req, res) => {
 
     try {
         const [staffRows] = await db.promise().query(
-            'SELECT * FROM staff WHERE staffSsn = ?', [staffSsn]
+            'SELECT * FROM staff ' +
+            'WHERE staffSsn = ?', [staffSsn]
         );
 
         if (staffRows.length === 0) {
@@ -259,7 +269,8 @@ app.get('/staff/:ssn/details', async (req, res) => {
         let supervisorName = null;
         if (staff.supervisorSsn) {
             const [supervisorRows] = await db.promise().query(
-                'SELECT staffName FROM staff WHERE staffSsn = ?', [staff.supervisorSsn]
+                'SELECT staffName FROM staff ' +
+                'WHERE staffSsn = ?', [staff.supervisorSsn]
             );
             if (supervisorRows.length > 0) {
                 supervisorName = supervisorRows[0].staffName;
@@ -304,7 +315,8 @@ app.post('/staff', async (req, res) => {
         );
 
         const [newStaffRows] = await db.promise().query(
-            'SELECT * FROM staff WHERE staffSsn = ?', [staffSsn]
+            'SELECT * FROM staff ' +
+            'WHERE staffSsn = ?', [staffSsn]
         );
 
         res.status(201).json(newStaffRows[0]);
@@ -326,7 +338,9 @@ app.put('/staff/:ssn', async (req, res) => {
             [staffName, staffPhone, staffSchedule, staffRole, supervisorSsn || null, staffSsn]
         );
 
-        const [updated] = await db.promise().query('SELECT * FROM staff WHERE staffSsn = ?', [staffSsn]);
+        const [updated] = await db.promise().query(
+            'SELECT * FROM staff ' +
+            'WHERE staffSsn = ?', [staffSsn]);
 
         if (updated.length === 0) {
             return res.status(404).json({ error: 'Staff member not found after update' });
@@ -362,7 +376,9 @@ app.post('/staff/:ssn/assign-animal', async (req, res) => {
 
     try {
         const [existing] = await db.promise().query(
-            `SELECT * FROM cares_for WHERE St_staffSsn = ? AND Al_animalId = ?`,
+            `SELECT * FROM cares_for 
+            WHERE St_staffSsn = ? 
+              AND Al_animalId = ?`,
             [staffSsn, animalId]
         );
 
@@ -432,7 +448,8 @@ app.get('/vets/:ssn/details', async (req, res) => {
 
     try {
         const [vetRows] = await db.promise().query(
-            'SELECT * FROM vet WHERE vetSsn = ?', [vetSsn]
+            'SELECT * FROM vet ' +
+            'WHERE vetSsn = ?', [vetSsn]
         );
 
         if (vetRows.length === 0) {
@@ -472,7 +489,8 @@ app.post('/vets', async (req, res) => {
         );
 
         const [newVetRows] = await db.promise().query(
-            'SELECT * FROM vet WHERE vetSsn = ?', [vetSsn]
+            'SELECT * FROM vet ' +
+            'WHERE vetSsn = ?', [vetSsn]
         );
 
         res.status(201).json(newVetRows[0]);
@@ -499,7 +517,8 @@ app.put('/vets/:ssn', async (req, res) => {
         }
 
         const [updatedRows] = await db.promise().query(
-            'SELECT * FROM vet WHERE vetSsn = ?',
+            'SELECT * FROM vet ' +
+            'WHERE vetSsn = ?',
             [vetSsn]
         );
 
@@ -805,7 +824,8 @@ app.patch('/animals/:id/gender-spay', async (req, res) => {
         );
 
         const [updatedRows] = await db.promise().query(
-            'SELECT * FROM animal WHERE animalId = ?',
+            'SELECT * FROM animal ' +
+            'WHERE animalId = ?',
             [animalId]
         );
 
@@ -977,7 +997,6 @@ app.get('/supplies', (req, res) => {
                 WHERE an.Sy_supplyId = s.supplyId
             ) AS animalIds,
 
-            -- Supplier names
             (
                 SELECT GROUP_CONCAT(DISTINCT sp.supplierName SEPARATOR ', ')
                 FROM SUPPLIED_BY sb
