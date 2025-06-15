@@ -1,4 +1,7 @@
-//StaffDetailModal.js
+// StaffDetailModal.js
+// This component shows detailed information about a staff member, including their contact info,
+// supervisor, and the animals they are currently caring for and includes Edit button.
+
 import React, {useEffect, useState} from 'react';
 import './AnimalDetailModal.css';
 

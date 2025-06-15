@@ -1,4 +1,8 @@
 // AnimalList.js
+// Displays all animals that match the current filters.
+// Filters include gender, spay/neuter status, adoption status, caretaker, vet, name, and days at shelter.
+// Uses AnimalCard to show basic info and supports further actions on Edit and More Info.
+
 import React, { useState } from 'react';
 import AnimalCard from './AnimalCard';
 import AnimalFilterBar from './AnimalFilterBar';

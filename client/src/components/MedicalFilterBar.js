@@ -1,4 +1,8 @@
 // MedicalFilterBar.js
+// This component displays the filter options for the Medical History tab.
+// It lets users search by animal name, diagnosis, species, breed, caretaker, vet,
+// adoption status, and visit date range.
+
 import React from 'react';
 import './FilterBar.css';
 

@@ -1,4 +1,8 @@
 // EditAnimalModal.js
+// Modal form for editing or deleting an existing animal.
+// Pre-fills fields with selected animal's details and allows updates to all editable fields.
+// On submit, triggers update handler; includes confirmation step before deletion.
+
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css';
 export default function EditAnimalModal({ initialData, onClose, onSave, onDelete }) {

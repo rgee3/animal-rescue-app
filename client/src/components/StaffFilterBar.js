@@ -1,4 +1,7 @@
 // StaffFilterBar.js
+// This component displays filter options for staff members, including name, role,
+// and the name of an animal they are caring for. It updates the filter values as the user types or selects.
+
 import React from 'react';
 import './FilterBar.css';
 export default function StaffFilterBar({ filter, setFilter, allAnimals }) {

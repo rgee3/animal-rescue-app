@@ -1,4 +1,9 @@
 // SearchTab.js
+// This component shows an advanced search form where users can filter animals
+// by species, breed, status, medical records, staff, etc.
+// When the "Search" button is clicked, it sends all the filters to the server
+// and displays matching results in a table.
+
 import React, { useState } from 'react';
 import './SearchTab.css';
 

@@ -1,4 +1,10 @@
 //AddMedicalRecordModal.js
+// This modal lets users add a new medical record for an animal.
+// It supports vaccination records (name, date, and lot number)
+// and appointment records (vet, visit date, and diagnosis).
+// The form adjusts accordingly based on the record type that is
+// selected, and, when submitted, sends the completed information back to the main page.
+
 import React, { useState, useEffect } from 'react';
 import './MedicalHistoryModal.css';
 

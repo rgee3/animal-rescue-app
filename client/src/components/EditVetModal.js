@@ -1,4 +1,8 @@
 // EditVetModal.js
+// This modal allows users to update or delete a vet’s information.
+// Editable fields include name, phone number, schedule, and address.
+// Deletes require confirmation, and all changes are passed back up to be saved or removed from the database.
+
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css';
 

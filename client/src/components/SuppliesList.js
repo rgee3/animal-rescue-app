@@ -1,4 +1,7 @@
 // SuppliesList.js
+// Displays all supplies grouped by type. Includes filters for supply type, name, animal, and supplier info.
+// Allows users to expand each supply to see related animals and to open modals for adding or editing supply records.
+
 import React, { useEffect, useState } from 'react';
 import SupplyFilterBar from './SupplyFilterBar';
 import './SuppliesList.css';

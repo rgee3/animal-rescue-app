@@ -1,4 +1,8 @@
 // EditSupplyModal.js
+// This modal allows users to update or delete an existing supply record.
+// Users can edit the name, type, inventory amount, and update relationships
+// with multiple animals and suppliers. Supports multi-select dropdowns.
+
 import React, { useEffect, useState } from 'react';
 import './AddAnimalModal.css';
 

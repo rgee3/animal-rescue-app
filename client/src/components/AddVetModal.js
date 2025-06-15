@@ -1,4 +1,8 @@
 // AddVetModal.js
+// This modal allows users to add a new vet by entering their SSN, name, phone,
+// schedule, and address. When submitted, the form sends the vet data to server to add the data
+// then closes the modal.
+
 import React, { useState } from 'react';
 import './AddAnimalModal.css';
 

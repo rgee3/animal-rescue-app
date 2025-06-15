@@ -1,4 +1,8 @@
 // EditAdoptionModal.js
+// Allows editing or deleting an existing adoption record.
+// Loads all animals for selection and pre-fills the form with the current adoption info.
+// On save, sends updated form data; on delete, confirms and processes delete handler.
+
 import React, { useState, useEffect } from 'react';
 import './AddAdoptionModal.css';
 

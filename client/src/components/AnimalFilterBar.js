@@ -1,4 +1,9 @@
 // AnimalFilterBar.js
+// Renders a set of search and filter inputs to narrow down the list of animals.
+// Includes dropdowns for adoption status, gender, and spay/neuter status,
+// along with number inputs for days at the shelter and text inputs for caretaker or animal name.
+// Updates filter state in the parent component on each change.
+
 import React from 'react';
 import './FilterBar.css';
 

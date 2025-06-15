@@ -1,4 +1,9 @@
 // MainDashboard.js
+// This is the main page of the app. It lets users switch between different sections:
+// Animals, Staff, Vets, Adoptions, Medical History, Supplies, and Advanced Search.
+// It loads data from the backend when a section is opened, and handles showing, editing,
+// and adding records for each section using modals.
+
 import React, {useState, useEffect} from 'react';
 import AnimalList from './AnimalList';
 import StaffList from './StaffList';

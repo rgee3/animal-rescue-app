@@ -1,4 +1,8 @@
 // MedicalHistoryList.js
+// Displays a summary of an animal's medical history,
+// including age, gender, diagnosis, vet info, and caretaker.
+// Includes a "More Info" button to view full medical details.
+
 import React, { useState } from 'react';
 import MedicalHistoryCard from './MedicalHistoryCard';
 import MedicalFilterBar from './MedicalFilterBar';

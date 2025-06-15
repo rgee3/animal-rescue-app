@@ -1,4 +1,7 @@
 // VetCard.js
+// Displays basic information for a single vet, including name, phone, and schedule.
+// Includes buttons that trigger "More Info" and "Edit" actions.
+
 import React from 'react';
 import './VetCard.css';
 

@@ -1,4 +1,8 @@
 // AnimalCard.js
+// Renders a single animal's details as a 'card', including name, species, breed, gender, age, and status.
+// Includes buttons for viewing more information or editing the animal.
+// Age is calculated from the animal's birthdate.
+
 import React from 'react';
 import './AnimalCard.css';
 

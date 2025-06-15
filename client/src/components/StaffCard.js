@@ -1,4 +1,7 @@
-//StaffCard.js
+// StaffCard.js
+// Displays basic details for one staff member (name, role, phone, and availability).
+// Includes "More Info" and "Edit" buttons.
+
 import React from 'react';
 import './StaffCard.css';
 

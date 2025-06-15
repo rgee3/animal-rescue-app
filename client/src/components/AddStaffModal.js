@@ -1,4 +1,9 @@
 // AddStaffModal.js
+// This modal is a form allowing users to add a new staff member to the system.
+// Users can enter the staff's SSN, name, phone number, schedule, role,
+// and a supervisor’s SSN if applicable. The form sends the entered info
+// back to the main page when submitted.
+
 import React, { useState } from 'react';
 import './AddAnimalModal.css';
 

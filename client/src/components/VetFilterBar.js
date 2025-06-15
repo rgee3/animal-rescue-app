@@ -1,4 +1,6 @@
 // VetFilterBar.js
+// Provides search filters for narrowing down the list of vets based on name, schedule, or animals they've treated.
+
 import React from 'react';
 import './FilterBar.css';
 

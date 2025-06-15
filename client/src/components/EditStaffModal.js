@@ -1,4 +1,8 @@
 // EditStaffModal.js
+// Form for updating a staff member’s profile, role, and assigned animals.
+// Supports assigning/unassigning animals in real time.
+// Triggers update or delete actions depending on user's selection.
+
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css';
 

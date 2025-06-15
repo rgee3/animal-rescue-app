@@ -1,4 +1,9 @@
 // AnimalDetailModal.js
+// Displays full details for a selected animal, organized into tabs: Info, Medical, and Adoption.
+// - Info tab shows general data like species, breed, and caretakers.
+// - Medical tab lists vaccinations and vet visits.
+// - Adoption tab shows historical adoption data.
+
 import React, { useState } from 'react';
 import './AnimalDetailModal.css';
 

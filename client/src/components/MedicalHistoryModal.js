@@ -1,4 +1,8 @@
-//MedicalHistoryModal.js
+// MedicalHistoryModal.js
+// This modal shows the medical records for a selected animal.
+// Users can view and edit things like vaccines, appointments, and basic info.
+// It has tabs to switch between summary, vaccinations, and appointments.
+
 import React from 'react';
 import { useState, useEffect} from 'react';
 import './MedicalHistoryModal.css';

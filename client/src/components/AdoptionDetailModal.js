@@ -1,4 +1,6 @@
 // AdoptionDetailModal.js
+// Displays detailed adoption information inside a modal, including adopter SSN and animal details.
+
 import React from 'react';
 import './AddAnimalModal.css';
 

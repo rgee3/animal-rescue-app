@@ -1,4 +1,8 @@
 // AdoptionList.js
+// Displays a list of adoptions filtered by user input.
+// Uses AdoptionFilterBar to manage filtering and maps results into AdoptionCards.
+// Supports "Edit" and "More Info" actions passed in as props.
+
 import React, { useState } from 'react';
 import AdoptionCard from './AdoptionCard';
 import AdoptionFilterBar from './AdoptionFilterBar';

@@ -1,4 +1,7 @@
 // VetList.js
+// Displays a list of vet cards, filtered by name, schedule, or animals they've seen.
+// Renders a filter bar at the top and maps matching vets into individual VetCard components.
+
 import React, {useState} from 'react';
 import VetCard from './VetCard';
 import VetFilterBar from './VetFilterBar';

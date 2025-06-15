@@ -1,4 +1,7 @@
 // VetDetailModal.js
+// Displays detailed information about a specific vet, including contact info and a list of animals they've treated.
+// Shown when the user clicks "More Info" on a vet card.
+
 import React from 'react';
 import './AddAnimalModal.css';
 

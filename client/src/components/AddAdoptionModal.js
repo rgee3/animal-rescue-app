@@ -1,4 +1,12 @@
 // AddAdoptionModal.js
+//
+// This modal component allows users to record a new animal adoption.
+// It fetches a list of animals currently available for adoption,
+// collects adopter information (SSN, name, contact details, etc.),
+// and when the user clicks save, the form sends the information back to the main page.
+// This form is used to register a new adopter as necessary, and
+// link them to an animal via a selected adoption date.
+
 import React, { useState, useEffect } from 'react';
 import './AddAdoptionModal.css';
 

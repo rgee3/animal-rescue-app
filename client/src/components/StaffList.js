@@ -1,4 +1,7 @@
 // StaffList.js
+// Shows a list of staff members with filters for name, role, and animals they care for.
+// Uses StaffCard to display each staff and StaffFilterBar for the search options.
+
 import React, { useState } from 'react';
 import StaffCard from './StaffCard';
 import StaffFilterBar from './StaffFilterBar';

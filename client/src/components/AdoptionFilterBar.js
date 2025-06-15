@@ -1,4 +1,7 @@
 // AdoptionFilterBar.js
+// Provides filter fields for narrowing down adoptions by adopter name, animal info, and date range.
+// Updates the parent component's filter state on each change.
+
 export default function AdoptionFilterBar({ filter, setFilter }) {
     const handleChange = (e) => {
         const { name, value } = e.target;

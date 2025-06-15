@@ -1,4 +1,8 @@
 // AddSupplyModal.js
+// This modal lets users add a new supply to the system by filling out a form
+// with the supply’s name, type, inventory amount, and associated animals and suppliers.
+// Multiple animals and suppliers can be selected.
+// Once submitted, the new supply is sent to the server and saved, and the modal closes.
 import React, { useEffect, useState } from 'react';
 import './AddAnimalModal.css';
 

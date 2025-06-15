@@ -1,4 +1,7 @@
 // AdoptionCard.js
+// Displays a summary 'card' for a single adoption, including the animal and adopter details.
+// Offers "More Info" and "Edit" buttons that trigger functions passed in as props.
+
 import React from 'react';
 
 export default function AdoptionCard({ adoption, onMoreInfo, onEdit }) {

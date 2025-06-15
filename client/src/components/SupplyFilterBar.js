@@ -1,4 +1,7 @@
 // SupplyFilterBar.js
+// Renders a set of input fields and dropdowns that allow users to filter the supplies list
+// by type, name, animal, supplier name, or supplier ID.
+
 import React from 'react';
 import './FilterBar.css';
 

@@ -1,4 +1,10 @@
 // AddAnimalModal.js
+// This modal lets users add a new animal to the system.
+// It includes fields for basic info like name, species, gender, birthdate,
+// arrival date, adoption status, and spay/neuter status.
+// Once the form is filled out and submitted, the data is sent back
+// to the main page to be saved.
+
 import React, { useState } from 'react';
 import './AddAnimalModal.css';
 
