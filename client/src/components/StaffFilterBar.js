@@ -10,6 +10,8 @@ export default function StaffFilterBar({ filter, setFilter, allAnimals }) {
                     type="text"
                     value={filter.name}
                     onChange={(e) => setFilter({ ...filter, name: e.target.value })}
+                    placeholder="e.g. Alice"
+
                 />
             </label>
 
@@ -18,6 +20,7 @@ export default function StaffFilterBar({ filter, setFilter, allAnimals }) {
                 <select
                     value={filter.role}
                     onChange={(e) => setFilter({ ...filter, role: e.target.value })}
+
                 >
                     <option value="">All</option>
                     <option value="Manager">Manager</option>
@@ -26,6 +29,7 @@ export default function StaffFilterBar({ filter, setFilter, allAnimals }) {
                     <option value="Admin">Admin</option>
                     <option value="Other">Other</option>
                 </select>
+
             </label>
 
             <label>
@@ -34,6 +38,8 @@ export default function StaffFilterBar({ filter, setFilter, allAnimals }) {
                     type="text"
                     value={filter.animal}
                     onChange={(e) => setFilter({ ...filter, animal: e.target.value })}
+                    placeholder="e.g. Lucky"
+
                 />
             </label>
         </div>
