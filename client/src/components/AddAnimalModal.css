@@ -79,3 +79,33 @@
     padding: 8px 12px;
     cursor: pointer;
 }
+
+.multi-list {
+    margin: 5px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.selected-item {
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.selected-item button {
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    cursor: pointer;
+    color: #c00;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0;
+    vertical-align: top;
+    margin-top: -2px;
+}
+

@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import SupplyFilterBar from './SupplyFilterBar';
 import './SuppliesList.css';
-import AddSupplyModal from './AddSupplyModal';
+import AddSupplyModal from './AddSupplyModal';import EditSupplyModal from './EditSupplyModal';
+
 
 export default function SuppliesList() {
     const [supplies, setSupplies] = useState([]);
@@ -15,6 +16,8 @@ export default function SuppliesList() {
         supplierName: '',
     });
     const [showAddModal, setShowAddModal] = useState(false);
+    const [editSupply, setEditSupply] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 
 
@@ -85,6 +88,7 @@ export default function SuppliesList() {
                             <th>In Stock</th>
                             <th>Needed By (# of Animals)</th>
                             <th>Details</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
 
@@ -102,11 +106,25 @@ export default function SuppliesList() {
                                             {expandedRows[item.supplyId] ? 'Hide' : 'Show'} Animals
                                         </button>
                                     </td>
+                                    <td>
+                                        <button onClick={() => {
+                                            setEditSupply({
+                                                ...item,
+                                                animalIds: item.animalIds?.split(', ').map(Number) || [],
+                                                supplierIds: item.supplierIds?.split(', ').map(Number) || [],
+                                            });
+
+                                            setIsEditModalOpen(true);
+                                        }}>
+                                            ✏️ Edit
+                                        </button>
+                                    </td>
                                 </tr>
+
 
                                 {expandedRows[item.supplyId] && (
                                     <tr className="animal-row">
-                                        <td colSpan="6">
+                                        <td colSpan="7">
                                             <strong>Used by:</strong>
                                             {item.animalNames ? (
                                                 <ul className="animal-name-list">
@@ -138,6 +156,26 @@ export default function SuppliesList() {
                     }}
                 />
             )}
+
+            {isEditModalOpen && editSupply && (
+                <EditSupplyModal
+                    initialData={editSupply}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setEditSupply(null);
+                    }}
+                    onSave={() => {
+                        fetch('http://localhost:3001/supplies')
+                            .then(res => res.json())
+                            .then(data => setSupplies(data))
+                            .catch(err => console.error('Error fetching supplies:', err));
+                    }}
+                    onDelete={(deletedId) => {
+                        setSupplies(prev => prev.filter(s => s.supplyId !== deletedId));
+                    }}
+                />
+            )}
+
         </div>
     );
 

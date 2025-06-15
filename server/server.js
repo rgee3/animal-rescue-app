@@ -972,6 +972,13 @@ app.get('/supplies', (req, res) => {
             ) AS animalNames,
 
             (
+                SELECT GROUP_CONCAT(DISTINCT an.Al_animalId SEPARATOR ', ')
+                FROM ANIMAL_NEEDS an
+                WHERE an.Sy_supplyId = s.supplyId
+            ) AS animalIds,
+
+            -- Supplier names
+            (
                 SELECT GROUP_CONCAT(DISTINCT sp.supplierName SEPARATOR ', ')
                 FROM SUPPLIED_BY sb
                          JOIN SUPPLIER sp ON sb.Sr_supplierId = sp.supplierId
@@ -986,6 +993,7 @@ app.get('/supplies', (req, res) => {
 
         FROM SUPPLIES s
         ORDER BY s.supplyType, s.supplyName;
+
 
 
 
@@ -1052,6 +1060,79 @@ app.post('/supplies', (req, res) => {
             .catch(err => {
                 console.error('Error linking supply:', err);
                 res.status(500).json({ error: 'Failed to link supply to animals or suppliers' });
+            });
+    });
+});
+
+app.get('/suppliers', (req, res) => {
+    db.query('SELECT supplierId, supplierName FROM SUPPLIER', (err, results) => {
+        if (err) {
+            console.error('Error fetching suppliers:', err);
+            return res.status(500).json({ error: 'Failed to fetch suppliers' });
+        }
+        res.json(results);
+    });
+});
+
+app.delete('/supplies/:id', (req, res) => {
+    const supplyId = req.params.id;
+
+    db.query('DELETE FROM SUPPLIES WHERE supplyId = ?', [supplyId], (err, result) => {
+        if (err) {
+            console.error('Error deleting supply:', err);
+            return res.status(500).json({ error: 'Failed to delete supply' });
+        }
+
+        res.json({ message: 'Supply deleted successfully' });
+    });
+});
+
+app.put('/supplies/:id', (req, res) => {
+    const supplyId = req.params.id;
+    const { supplyName, supplyType, inventoryAmount, animalIds = [], supplierIds = [] } = req.body;
+
+    const updateSupplyQuery = `
+        UPDATE SUPPLIES
+        SET supplyName = ?, supplyType = ?, inventoryAmount = ?
+        WHERE supplyId = ?
+    `;
+
+    db.query(updateSupplyQuery, [supplyName, supplyType, inventoryAmount, supplyId], (err) => {
+        if (err) {
+            console.error('Error updating supply:', err);
+            return res.status(500).json({ error: 'Failed to update supply' });
+        }
+
+        const clearAnimalNeeds = new Promise((resolve, reject) => {
+            db.query('DELETE FROM ANIMAL_NEEDS WHERE Sy_supplyId = ?', [supplyId], err => err ? reject(err) : resolve());
+        });
+
+        const clearSuppliedBy = new Promise((resolve, reject) => {
+            db.query('DELETE FROM SUPPLIED_BY WHERE Sy_supplyId = ?', [supplyId], err => err ? reject(err) : resolve());
+        });
+
+        const insertAnimalNeeds = () => {
+            if (animalIds.length === 0) return Promise.resolve();
+            const data = animalIds.map(id => [id, supplyId]);
+            return new Promise((resolve, reject) => {
+                db.query('INSERT INTO ANIMAL_NEEDS (Al_animalId, Sy_supplyId) VALUES ?', [data], err => err ? reject(err) : resolve());
+            });
+        };
+
+        const insertSuppliedBy = () => {
+            if (supplierIds.length === 0) return Promise.resolve();
+            const data = supplierIds.map(id => [supplyId, id]);
+            return new Promise((resolve, reject) => {
+                db.query('INSERT INTO SUPPLIED_BY (Sy_supplyId, Sr_supplierId) VALUES ?', [data], err => err ? reject(err) : resolve());
+            });
+        };
+
+        Promise.all([clearAnimalNeeds, clearSuppliedBy])
+            .then(() => Promise.all([insertAnimalNeeds(), insertSuppliedBy()]))
+            .then(() => res.json({ message: 'Supply updated successfully' }))
+            .catch(err => {
+                console.error('Error updating relationships:', err);
+                res.status(500).json({ error: 'Failed to update animal/supplier links' });
             });
     });
 });
