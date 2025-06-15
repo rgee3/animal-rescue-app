@@ -1,4 +1,4 @@
-// src/components/AnimalFilterBar.js
+// AnimalFilterBar.js
 import React from 'react';
 import './FilterBar.css';
 

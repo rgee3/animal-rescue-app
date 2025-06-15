@@ -1,4 +1,4 @@
-// src/components/AnimalCard.js
+// AnimalCard.js
 import React from 'react';
 import './AnimalCard.css';
 

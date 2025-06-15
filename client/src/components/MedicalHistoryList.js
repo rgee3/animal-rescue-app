@@ -1,4 +1,4 @@
-// src/components/MedicalHistoryList.js
+// MedicalHistoryList.js
 import React, { useState } from 'react';
 import MedicalHistoryCard from './MedicalHistoryCard';
 import MedicalFilterBar from './MedicalFilterBar';

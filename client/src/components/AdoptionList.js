@@ -1,4 +1,4 @@
-// src/components/AdoptionList.js
+// AdoptionList.js
 import React, { useState } from 'react';
 import AdoptionCard from './AdoptionCard';
 import AdoptionFilterBar from './AdoptionFilterBar';

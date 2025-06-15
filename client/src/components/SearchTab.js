@@ -1,4 +1,4 @@
-// src/components/SearchTab.js
+// SearchTab.js
 import React, { useState } from 'react';
 import './SearchTab.css';
 

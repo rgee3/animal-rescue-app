@@ -1,4 +1,4 @@
-// src/components/AnimalDetailModal.js
+// AnimalDetailModal.js
 import React, { useState } from 'react';
 import './AnimalDetailModal.css';
 

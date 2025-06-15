@@ -1,3 +1,4 @@
+//MedicalHistoryModal.js
 import React from 'react';
 import { useState, useEffect} from 'react';
 import './MedicalHistoryModal.css';

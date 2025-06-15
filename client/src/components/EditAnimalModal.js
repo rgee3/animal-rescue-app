@@ -1,4 +1,4 @@
-// src/components/EditAnimalModal.js
+// EditAnimalModal.js
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css';
 export default function EditAnimalModal({ initialData, onClose, onSave, onDelete }) {

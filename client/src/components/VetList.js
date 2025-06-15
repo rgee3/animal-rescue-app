@@ -1,4 +1,4 @@
-// src/components/VetList.js
+// VetList.js
 import React, {useState} from 'react';
 import VetCard from './VetCard';
 import VetFilterBar from './VetFilterBar';

@@ -1,4 +1,4 @@
-// src/components/StaffFilterBar.js
+// StaffFilterBar.js
 import React from 'react';
 import './FilterBar.css';
 export default function StaffFilterBar({ filter, setFilter, allAnimals }) {

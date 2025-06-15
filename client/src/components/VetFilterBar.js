@@ -1,4 +1,4 @@
-// src/components/VetFilterBar.js
+// VetFilterBar.js
 import React from 'react';
 import './FilterBar.css';
 

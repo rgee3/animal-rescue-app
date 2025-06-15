@@ -1,4 +1,4 @@
-// src/components/VetCard.js
+// VetCard.js
 import React from 'react';
 import './VetCard.css';
 

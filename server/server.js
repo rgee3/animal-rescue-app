@@ -60,7 +60,7 @@ app.get('/animals/:id/details', async (req, res) => {
              FROM vet_visits vv
                       JOIN vet v ON vv.V_vetSsn = v.vetSsn
              WHERE vv.Al_animalId = ?
-            ORDER BY vv.visitDate DESC`, [animalId]
+             ORDER BY vv.visitDate DESC`, [animalId]
 
         );
 

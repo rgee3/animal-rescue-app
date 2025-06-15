@@ -1,4 +1,4 @@
-// src/components/AdoptionCard.js
+// AdoptionCard.js
 import React from 'react';
 
 export default function AdoptionCard({ adoption, onMoreInfo, onEdit }) {

@@ -1,4 +1,4 @@
-// src/components/EditSupplyModal.js
+// EditSupplyModal.js
 import React, { useEffect, useState } from 'react';
 import './AddAnimalModal.css';
 

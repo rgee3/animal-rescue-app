@@ -1,3 +1,4 @@
+//StaffCard.js
 import React from 'react';
 import './StaffCard.css';
 

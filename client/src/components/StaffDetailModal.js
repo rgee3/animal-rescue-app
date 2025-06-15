@@ -1,3 +1,4 @@
+//StaffDetailModal.js
 import React, {useEffect, useState} from 'react';
 import './AnimalDetailModal.css';
 

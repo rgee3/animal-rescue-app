@@ -1,4 +1,4 @@
-// src/components/EditStaffModal.js
+// EditStaffModal.js
 import React, { useState, useEffect } from 'react';
 import './AddAnimalModal.css';
 

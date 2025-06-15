@@ -1,3 +1,4 @@
+// AdoptionFilterBar.js
 export default function AdoptionFilterBar({ filter, setFilter }) {
     const handleChange = (e) => {
         const { name, value } = e.target;

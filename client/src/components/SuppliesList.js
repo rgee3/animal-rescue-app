@@ -1,4 +1,4 @@
-// src/components/SuppliesList.js
+// SuppliesList.js
 import React, { useEffect, useState } from 'react';
 import SupplyFilterBar from './SupplyFilterBar';
 import './SuppliesList.css';

@@ -1,7 +1,4 @@
 // MainDashboard.js
-// This is the centralized home page for Animal Rescue web application.
-// It manages the main view state (animals, staff, vets, adoptions, medical history, supplies, and an advanced search.
-// It fetches data for the animals and staff, and
 import React, {useState, useEffect} from 'react';
 import AnimalList from './AnimalList';
 import StaffList from './StaffList';
@@ -54,7 +51,7 @@ export default function MainDashboard() {
 
     const [adoptions, setAdoptions] = useState([]);
     const [showAddAdoptionModal, setShowAddAdoptionModal] = useState(false);
-    const [selectedAdoption, setSelectedAdoption] = useState(null); // for edit/detail
+    const [selectedAdoption, setSelectedAdoption] = useState(null);
     const [showEditAdoptionModal, setShowEditAdoptionModal] = useState(false);
     const [showAdoptionDetailModal, setShowAdoptionDetailModal] = useState(false);
 
@@ -99,7 +96,7 @@ export default function MainDashboard() {
         }).then((res) => {
             if (res.ok) {
                 setShowEditAdoptionModal(false);
-                loadAdoptions(); // ← make sure this is defined!
+                loadAdoptions();
             } else {
                 alert('Failed to update adoption');
             }
@@ -527,7 +524,6 @@ export default function MainDashboard() {
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify(formData),
                             });
-
                             const newVet = await response.json();
                             setVets(prev => [...prev, newVet]);
                             setShowAddVetModal(false);
@@ -565,6 +561,7 @@ export default function MainDashboard() {
                             alert('Error updating vet');
                         }
                     }}
+
                     onDelete={async (vetSsn) => {
                         try {
                             const res = await fetch(`http://localhost:3001/vets/${vetSsn}`, {
@@ -617,7 +614,6 @@ export default function MainDashboard() {
                     }}
                 />
             )}
-
 
             {showAddMedicalModal && (
                 <AddMedicalRecordModal

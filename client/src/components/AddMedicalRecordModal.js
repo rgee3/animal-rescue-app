@@ -1,3 +1,4 @@
+//AddMedicalRecordModal.js
 import React, { useState, useEffect } from 'react';
 import './MedicalHistoryModal.css';
 

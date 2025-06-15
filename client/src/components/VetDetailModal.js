@@ -1,4 +1,4 @@
-// src/components/VetDetailModal.js
+// VetDetailModal.js
 import React from 'react';
 import './AddAnimalModal.css';
 

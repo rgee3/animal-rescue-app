@@ -1,4 +1,4 @@
-// src/components/SupplyFilterBar.js
+// SupplyFilterBar.js
 import React from 'react';
 import './FilterBar.css';
 

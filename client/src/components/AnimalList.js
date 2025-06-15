@@ -1,3 +1,4 @@
+// AnimalList.js
 import React, { useState } from 'react';
 import AnimalCard from './AnimalCard';
 import AnimalFilterBar from './AnimalFilterBar';

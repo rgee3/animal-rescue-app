@@ -1,4 +1,4 @@
-// src/components/AdoptionDetailModal.js
+// AdoptionDetailModal.js
 import React from 'react';
 import './AddAnimalModal.css';
 
