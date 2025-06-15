@@ -116,7 +116,7 @@ export default function SuppliesList() {
 
                                             setIsEditModalOpen(true);
                                         }}>
-                                            ✏️ Edit
+                                            Edit
                                         </button>
                                     </td>
                                 </tr>
